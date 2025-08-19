@@ -18,6 +18,7 @@
             background: #f5f7fa;
             color: #333;
             line-height: 1.6;
+            overflow-x: auto;
         }
         
         .header {
@@ -90,14 +91,35 @@
             box-sizing: border-box;
         }
         
+        /* 1200px以下では全幅使用 */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100vw;
+                margin: 0;
+            }
+        }
+        
         .main-content {
-            display: grid;
-            grid-template-columns: 350px 1fr;
+            display: flex;
             gap: 30px;
             margin-top: 20px;
             width: 100%;
             max-width: 100%;
-            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .sidebar {
+            flex: 0 0 350px;
+            min-width: 300px;
+        }
+        
+        .main-area {
+            flex: 1;
+            min-width: 0;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
         
         .sidebar {
@@ -109,6 +131,7 @@
             position: sticky;
             top: 20px;
         }
+        
         
         .form-group {
             margin-bottom: 25px;
@@ -342,12 +365,6 @@
         }
         .template-custom { background: #ffffff; border: 2px solid #e1e8ed; }
         
-        .main-area {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
         
         .preview-section {
             margin-bottom: 30px;
@@ -375,18 +392,17 @@
             align-items: center;
             padding: 20px;
             max-width: 100%;
-            height: 660px; /* 888×600px + パディング */
+            width: 100%;
             margin: 0 auto;
+            min-height: 200px;
         }
         
         #cardCanvas {
             border: 1px solid #ddd;
             display: block;
             margin: 0 auto;
-            max-width: 888px;
-            max-height: 600px;
-            width: 888px !important;
-            height: 600px !important;
+            max-width: 100%;
+            max-height: 80vh;
         }
         
         .batch-section {
@@ -483,13 +499,198 @@
             width: 0%;
         }
         
+        /* レスポンシブ対応: 1024px以下（中型タブレット） */
         @media (max-width: 1024px) {
+            .container {
+                padding: 15px;
+            }
+            
             .main-content {
-                grid-template-columns: 1fr;
+                gap: 20px;
             }
             
             .sidebar {
+                flex: 0 0 280px;
+                min-width: 250px;
                 position: static;
+            }
+            
+            #cardCanvas {
+                max-width: 100%;
+                width: auto !important;
+                height: auto !important;
+            }
+            
+            .canvas-container {
+                padding: 15px;
+                min-height: 150px;
+            }
+        }
+        
+        /* レスポンシブ対応: 900px以下（小型タブレット縦向き） */
+        @media (max-width: 900px) {
+            .sidebar {
+                flex: 0 0 260px;
+                min-width: 240px;
+            }
+            
+            .main-content {
+                gap: 15px;
+            }
+        }
+        
+        /* レスポンシブ対応: 768px以下（タブレット縦向き） */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .sidebar {
+                flex: none;
+                width: 100%;
+                min-width: unset;
+                padding: 25px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
+            
+            .main-area {
+                width: 100%;
+                padding: 25px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 0 10px;
+            }
+            
+            .header-actions {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            #cardCanvas {
+                max-width: 100%;
+                width: auto !important;
+                height: auto !important;
+            }
+            
+            .canvas-container {
+                padding: 15px;
+                min-height: 120px;
+            }
+            
+            .pattern-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            
+            .csv-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .file-name-controls {
+                margin-left: 0 !important;
+                margin-top: 10px;
+            }
+        }
+        
+        /* レスポンシブ対応: 600px以下（小型タブレット縦向き） */
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+            
+            .sidebar {
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
+            
+            .main-area {
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
+        }
+        
+        /* レスポンシブ対応: iPhone */
+        @media (max-width: 480px) {
+            .header-content {
+                padding: 0 8px;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .sidebar {
+                padding: 15px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
+            
+            .main-area {
+                padding: 15px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            }
+            
+            #cardCanvas {
+                max-width: 100%;
+                width: auto !important;
+                height: auto !important;
+            }
+            
+            .canvas-container {
+                padding: 10px;
+                min-height: 100px;
+            }
+            
+            .pattern-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+                padding: 10px;
+            }
+            
+            .pattern-item {
+                min-height: 50px;
+                font-size: 10px;
+                padding: 3px 5px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-group label {
+                font-size: 13px;
+            }
+            
+            .form-group select,
+            .form-group input,
+            .form-group textarea {
+                padding: 10px;
+                font-size: 13px;
             }
         }
         
@@ -701,18 +902,6 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-        }
-
-        @media (max-width: 768px) {
-            .csv-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .file-name-controls {
-                margin-left: 0 !important;
-                margin-top: 10px;
-            }
         }
     </style>
 </head>
@@ -961,7 +1150,7 @@
                                     <li><span class="step-number">1</span>下記からプロンプトテンプレートを選択</li>
                                     <li><span class="step-number">2</span>📋 コピーボタンでプロンプトをコピー</li>
                                     <li><span class="step-number">3</span>ChatGPT等の生成AIに貼り付けて実行</li>
-                                    <li><span class="step-number">4</span>生成されたCSVを以下"カスタムカード作成用CSV一括読み込み"セクションで読み込み</li>
+                                    <li><span class="step-number">4</span>生成されたCSVを以下"カスタムカード作成用CSV読み込み"セクションで読み込み</li>
                                 </ul>
                             </div>
                             
@@ -1095,7 +1284,7 @@ pattern_number,title,description,context,solution
 
                     <!-- CSV一括読み込みセクション -->
                     <div class="csv-section" style="margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #f1f3f4;">
-                        <h2 style="margin-bottom: 20px; color: #444;">📄 カスタムカード作成用CSV一括読み込み</h2>
+                        <h2 style="margin-bottom: 20px; color: #444;">📄 カスタムカード作成用CSV読み込み</h2>
                         <div class="info-panel" style="margin-bottom: 15px;">
                             <h3>💡 データファイル読み込み機能</h3>
                             <p>データファイル（CSV形式）から複数のカスタムパターンカードを一括生成できます。<br>
@@ -1214,7 +1403,7 @@ pattern_number,title,description,context,solution
                         </div>
                     </div>
 
-                    <h2 style="margin-bottom: 20px; color: #444;">パターンカード（プリセット分）一括生成</h2>
+                    <h2 style="margin-bottom: 20px; color: #444;">パターンカード（プリセット）一括生成</h2>
                     
                     <!-- プリセット版ダウンロード方式選択 -->
                     <div id="presetDownloadMethodSection" style="margin-bottom: 15px; padding: 10px; background: #f8f9ff; border: 1px solid #e1e8ed; border-radius: 6px;">
@@ -1399,6 +1588,97 @@ pattern_number,title,description,context,solution
             39: { title: "極端になれ！", description: "時には極端なアプローチを取り、従来の枠を破って学習する。", context: "従来の方法では成果が出ないとき、ブレイクスルーが必要なとき。", solution: "常識にとらわれず、時には極端なアプローチで学習に取り組む。" }
         };
         
+        // 効率的なレスポンシブキャンバスサイズ計算
+        function getResponsiveCanvasSize() {
+            const containerElement = document.querySelector('.canvas-container');
+            if (!containerElement) return { width: 888, height: 600 };
+            
+            // コンテナの利用可能サイズを取得
+            const containerRect = containerElement.getBoundingClientRect();
+            const containerWidth = containerRect.width - 40; // padding考慮
+            const containerHeight = Math.min(containerRect.height - 40, window.innerHeight * 0.8); // 最大80vh
+            
+            const aspectRatio = 888 / 600; // 1.48
+            const maxWidth = 888;
+            const maxHeight = 600;
+            
+            // 利用可能スペースに基づいて最適サイズを計算
+            let width = Math.min(containerWidth, maxWidth);
+            let height = width / aspectRatio;
+            
+            // 高さが制限を超える場合は高さ基準で調整
+            if (height > Math.min(containerHeight, maxHeight)) {
+                height = Math.min(containerHeight, maxHeight);
+                width = height * aspectRatio;
+            }
+            
+            // 最小サイズ制限
+            width = Math.max(width, 280);
+            height = Math.max(height, width / aspectRatio);
+            
+            return { 
+                width: Math.round(width), 
+                height: Math.round(height) 
+            };
+        }
+        
+        // キャンバスサイズを動的に調整
+        function updateCanvasSize() {
+            if (!canvas) return;
+            
+            const { width, height } = getResponsiveCanvasSize();
+            const scaleFactor = width / baseWidth; // 888pxを基準としたスケール
+            
+            // Fabric.js内部サイズを設定
+            canvas.setDimensions({ 
+                width: width, 
+                height: height 
+            });
+            
+            // DOM要素のサイズを完全同期
+            const canvasElement = document.getElementById('cardCanvas');
+            const upperCanvasElement = canvas.upperCanvasEl;
+            const lowerCanvasElement = canvas.lowerCanvasEl;
+            
+            // 親canvasのサイズ設定
+            canvasElement.width = width;
+            canvasElement.height = height;
+            canvasElement.style.width = width + 'px';
+            canvasElement.style.height = height + 'px';
+            
+            // upper-canvasのサイズを強制更新
+            if (upperCanvasElement) {
+                upperCanvasElement.width = width;
+                upperCanvasElement.height = height;
+                upperCanvasElement.style.width = width + 'px';
+                upperCanvasElement.style.height = height + 'px';
+            }
+            
+            // lower-canvasのサイズを強制更新
+            if (lowerCanvasElement) {
+                lowerCanvasElement.width = width;
+                lowerCanvasElement.height = height;
+                lowerCanvasElement.style.width = width + 'px';
+                lowerCanvasElement.style.height = height + 'px';
+            }
+            
+            // キャンバスのビューポートを設定
+            canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+            
+            // コンテンツは再生成するため、既存オブジェクトの調整は行わない
+            // 代わりにupdateCard()を呼び出してコンテンツを再構築
+            updateCard();
+        }
+        
+        // ウィンドウリサイズ時のイベントリスナー
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                updateCanvasSize();
+            }, 250);
+        });
+
         // Canvas初期化
         function initCanvas() {
             try {
@@ -1408,16 +1688,38 @@ pattern_number,title,description,context,solution
                     return;
                 }
                 
-                // Canvas初期化（888×600px固定）
+                // レスポンシブサイズを取得
+                const { width, height } = getResponsiveCanvasSize();
+                
+                // Canvas初期化（レスポンシブサイズ）
                 canvas = new fabric.Canvas('cardCanvas', {
-                    width: baseWidth,
-                    height: baseHeight,
+                    width: width,
+                    height: height,
                     backgroundColor: '#ffffff'
                 });
                 
-                // 表示サイズを888×600pxに固定
-                canvasElement.style.width = baseWidth + 'px';
-                canvasElement.style.height = baseHeight + 'px';
+                // DOM要素のサイズを完全同期
+                const upperCanvasElement = canvas.upperCanvasEl;
+                const lowerCanvasElement = canvas.lowerCanvasEl;
+                
+                // 表示サイズを設定
+                canvasElement.style.width = width + 'px';
+                canvasElement.style.height = height + 'px';
+                
+                // upper-canvasとlower-canvasのサイズも明示的に設定
+                if (upperCanvasElement) {
+                    upperCanvasElement.width = width;
+                    upperCanvasElement.height = height;
+                    upperCanvasElement.style.width = width + 'px';
+                    upperCanvasElement.style.height = height + 'px';
+                }
+                
+                if (lowerCanvasElement) {
+                    lowerCanvasElement.width = width;
+                    lowerCanvasElement.height = height;
+                    lowerCanvasElement.style.width = width + 'px';
+                    lowerCanvasElement.style.height = height + 'px';
+                }
                 
                 updateCard();
             } catch (error) {
@@ -1675,7 +1977,11 @@ pattern_number,title,description,context,solution
                 // カスタムカラーが設定されている場合は優先使用
                 const colors = customColors || templateColors[currentTemplate] || templateColors.academic;
                 
-                // 888×600px固定サイズ
+                // 現在のキャンバスサイズを取得
+                const currentSize = getResponsiveCanvasSize();
+                const scaleFactor = currentSize.width / baseWidth;
+                
+                // 基準サイズ（888×600px）とスケールファクターを設定
                 const width = baseWidth;
                 const height = baseHeight;
             
@@ -1713,21 +2019,21 @@ pattern_number,title,description,context,solution
             }
             canvas.add(background);
             
-            // パターン番号（左上）- 888×600px用にサイズ調整（見出しと高さ統一、適度な間隔確保）
+            // パターン番号（左上）- スケール調整対応
             if (patternNumber) {
                 const numberCircle = new fabric.Circle({
-                    left: 45,
-                    top: 38,
-                    radius: 30,
+                    left: 45 * scaleFactor,
+                    top: 38 * scaleFactor,
+                    radius: 30 * scaleFactor,
                     fill: colors.accent,
                     selectable: false
                 });
                 canvas.add(numberCircle);
                 
                 const numberText = new fabric.Text(patternNumber, {
-                    left: 75,
-                    top: 52,
-                    fontSize: 32,
+                    left: 75 * scaleFactor,
+                    top: 52 * scaleFactor,
+                    fontSize: 32 * scaleFactor,
                     fill: '#333333',
                     fontFamily: getCurrentFontFamily(),
                     fontWeight: 'bold',
@@ -1739,46 +2045,46 @@ pattern_number,title,description,context,solution
                 canvas.add(numberText);
             }
             
-            // タイトル背景（白い角丸）- 888×600px用にサイズ調整（番号と適度な間隔を確保）
-            const titleWidth = patternNumber ? 728 : 798;
-            const titleLeft = patternNumber ? 115 : 45;
+            // タイトル背景（白い角丸）- スケール調整対応
+            const titleWidth = (patternNumber ? 728 : 798) * scaleFactor;
+            const titleLeft = (patternNumber ? 115 : 45) * scaleFactor;
             
-            // 曲線的な透明度変化を作るグラデーション（中央まではゆるやか、その後急激に透明に）
+            // 曲線的な透明度変化を作るグラデーション
             const titleGradient = new fabric.Gradient({
                 type: 'linear',
                 coords: { x1: 0, y1: 0, x2: titleWidth, y2: 0 },
                 colorStops: [
-                    { offset: 0, color: hexToRgba(colors.accent, 0.9) },     // 左端：10%透明度
-                    { offset: 0.4, color: hexToRgba(colors.accent, 0.9) },   // 40%地点：10%透明度
-                    { offset: 0.6, color: hexToRgba(colors.accent, 0.8) },    // 60%地点：20%透明度
-                    { offset: 0.8, color: hexToRgba(colors.accent, 0.4) },    // 80%地点：60%透明度
-                    { offset: 1, color: hexToRgba(colors.accent, 0.0) }       // 右端：完全透明
+                    { offset: 0, color: hexToRgba(colors.accent, 0.9) },
+                    { offset: 0.4, color: hexToRgba(colors.accent, 0.9) },
+                    { offset: 0.6, color: hexToRgba(colors.accent, 0.8) },
+                    { offset: 0.8, color: hexToRgba(colors.accent, 0.4) },
+                    { offset: 1, color: hexToRgba(colors.accent, 0.0) }
                 ]
             });
             
             const titleBg = new fabric.Rect({
                 left: titleLeft,
-                top: 38,
+                top: 38 * scaleFactor,
                 width: titleWidth,
-                height: 60,
+                height: 60 * scaleFactor,
                 fill: titleGradient,
-                rx: 12,
-                ry: 12,
+                rx: 12 * scaleFactor,
+                ry: 12 * scaleFactor,
                 shadow: {
                     color: 'rgba(0,0,0,0.1)',
-                    blur: 15,
+                    blur: 15 * scaleFactor,
                     offsetX: 0,
-                    offsetY: 3
+                    offsetY: 3 * scaleFactor
                 },
                 selectable: false
             });
             canvas.add(titleBg);
             
-            // タイトル - 888×600px用にフォントサイズ調整（カード番号と垂直位置統一、2px上に調整）
+            // タイトル - スケール調整対応
             const titleText = new fabric.Text(title, {
-                left: patternNumber ? 125 : 60,
-                top: 52,
-                fontSize: 36,
+                left: (patternNumber ? 125 : 60) * scaleFactor,
+                top: 52 * scaleFactor,
+                fontSize: 36 * scaleFactor,
                 fill: '#333333',
                 fontFamily: getCurrentFontFamily(),
                 fontWeight: 'bold',
@@ -1786,50 +2092,50 @@ pattern_number,title,description,context,solution
             });
             canvas.add(titleText);
             
-            // コンテンツエリア（白い背景）- 888×600px用にサイズ調整
-            const contentWidth = 798;
+            // コンテンツエリア（白い背景）- スケール調整対応
+            const contentWidth = 798 * scaleFactor;
             
-            // 曲線的な透明度変化を作るグラデーション（中央まではゆるやか、その後急激に透明に）
+            // 曲線的な透明度変化を作るグラデーション
             const contentGradient = new fabric.Gradient({
                 type: 'linear',
                 coords: { x1: 0, y1: 0, x2: contentWidth, y2: 0 },
                 colorStops: [
-                    { offset: 0, color: hexToRgba(colors.accent, 0.9) },     // 左端：10%透明度
-                    { offset: 0.4, color: hexToRgba(colors.accent, 0.9) },   // 40%地点：10%透明度
-                    { offset: 0.6, color: hexToRgba(colors.accent, 0.8) },    // 60%地点：20%透明度
-                    { offset: 0.8, color: hexToRgba(colors.accent, 0.4) },    // 80%地点：60%透明度
-                    { offset: 1, color: hexToRgba(colors.accent, 0.1) }       // 右端：90%透明度
+                    { offset: 0, color: hexToRgba(colors.accent, 0.9) },
+                    { offset: 0.4, color: hexToRgba(colors.accent, 0.9) },
+                    { offset: 0.6, color: hexToRgba(colors.accent, 0.8) },
+                    { offset: 0.8, color: hexToRgba(colors.accent, 0.4) },
+                    { offset: 1, color: hexToRgba(colors.accent, 0.1) }
                 ]
             });
             
             const contentBg = new fabric.Rect({
-                left: 45,
-                top: 120,
+                left: 45 * scaleFactor,
+                top: 120 * scaleFactor,
                 width: contentWidth,
-                height: 435,
+                height: 435 * scaleFactor,
                 fill: contentGradient,
-                rx: 18,
-                ry: 18,
+                rx: 18 * scaleFactor,
+                ry: 18 * scaleFactor,
                 shadow: {
                     color: 'rgba(0,0,0,0.2)',
-                    blur: 23,
+                    blur: 23 * scaleFactor,
                     offsetX: 0,
-                    offsetY: 8
+                    offsetY: 8 * scaleFactor
                 },
                 selectable: false
             });
             canvas.add(contentBg);
             
-            let yPosition = 150;
+            let yPosition = 150 * scaleFactor;
             
-            // 説明 - 888×600px用にサイズ調整
+            // 説明 - スケール調整対応
             if (description) {
                 const formattedDescription = insertLineBreaks(description);
                 const descText = new fabric.Textbox(formattedDescription, {
-                    left: 75,
+                    left: 75 * scaleFactor,
                     top: yPosition,
-                    width: 738,
-                    fontSize: 21,
+                    width: 738 * scaleFactor,
+                    fontSize: 21 * scaleFactor,
                     fill: '#333333',
                     fontFamily: getCurrentFontFamily(),
                     selectable: false
@@ -1838,15 +2144,15 @@ pattern_number,title,description,context,solution
                 // テキストボックスの実際の高さを取得
                 canvas.renderAll();
                 const actualHeight = descText.calcTextHeight();
-                yPosition += Math.max(90, actualHeight + 30);
+                yPosition += Math.max(90 * scaleFactor, actualHeight + 30 * scaleFactor);
             }
             
-            // コンテクスト - 888×600px用にサイズ調整
+            // コンテクスト - スケール調整対応
             if (context) {
                 const contextLabel = new fabric.Text('📍 場面・状況', {
-                    left: 75,
+                    left: 75 * scaleFactor,
                     top: yPosition,
-                    fontSize: 18,
+                    fontSize: 18 * scaleFactor,
                     fill: '#333333',
                     fontFamily: getCurrentFontFamily(),
                     fontWeight: 'bold',
@@ -1855,10 +2161,10 @@ pattern_number,title,description,context,solution
                 canvas.add(contextLabel);
                 
                 const contextText = new fabric.Textbox(insertLineBreaks(context), {
-                    left: 75,
-                    top: yPosition + 30,
-                    width: 738,
-                    fontSize: 18,
+                    left: 75 * scaleFactor,
+                    top: yPosition + 30 * scaleFactor,
+                    width: 738 * scaleFactor,
+                    fontSize: 18 * scaleFactor,
                     fill: '#555555',
                     fontFamily: getCurrentFontFamily(),
                     selectable: false
@@ -1866,15 +2172,15 @@ pattern_number,title,description,context,solution
                 canvas.add(contextText);
                 canvas.renderAll();
                 const contextHeight = contextText.calcTextHeight();
-                yPosition += Math.max(105, contextHeight + 60);
+                yPosition += Math.max(105 * scaleFactor, contextHeight + 60 * scaleFactor);
             }
             
-            // 解決策 - 888×600px用にサイズ調整
-            if (solution && yPosition < 480) {
+            // 解決策 - スケール調整対応
+            if (solution && yPosition < 480 * scaleFactor) {
                 const solutionLabel = new fabric.Text('💡 工夫・トライアル', {
-                    left: 75,
+                    left: 75 * scaleFactor,
                     top: yPosition,
-                    fontSize: 18,
+                    fontSize: 18 * scaleFactor,
                     fill: '#333333',
                     fontFamily: getCurrentFontFamily(),
                     fontWeight: 'bold',
@@ -1883,10 +2189,10 @@ pattern_number,title,description,context,solution
                 canvas.add(solutionLabel);
                 
                 const solutionText = new fabric.Textbox(insertLineBreaks(solution), {
-                    left: 75,
-                    top: yPosition + 30,
-                    width: 738,
-                    fontSize: 18,
+                    left: 75 * scaleFactor,
+                    top: yPosition + 30 * scaleFactor,
+                    width: 738 * scaleFactor,
+                    fontSize: 18 * scaleFactor,
                     fill: '#555555',
                     fontFamily: getCurrentFontFamily(),
                     selectable: false
@@ -1900,7 +2206,53 @@ pattern_number,title,description,context,solution
         }
     }
         
-        // 現在のカードをエクスポート（888×600px固定）
+        // 高解像度でエクスポートするためのヘルパー関数
+        function exportCanvasAtHighResolution(targetCanvas, multiplier = 2) {
+            const currentWidth = targetCanvas.getWidth();
+            const currentHeight = targetCanvas.getHeight();
+            
+            // 高解像度の基準サイズ（888×600）を使用
+            const exportWidth = baseWidth;
+            const exportHeight = baseHeight;
+            const scale = exportWidth / currentWidth;
+            
+            // 一時的な高解像度キャンバスを作成
+            const tempCanvas = new fabric.Canvas(null, {
+                width: exportWidth * multiplier,
+                height: exportHeight * multiplier,
+                backgroundColor: targetCanvas.backgroundColor
+            });
+            
+            // オブジェクトを高解像度でコピー
+            targetCanvas.getObjects().forEach(obj => {
+                obj.clone((clonedObj) => {
+                    // 高解像度用にスケールを調整
+                    const originalScale = obj.originalScale || 1;
+                    const finalScale = originalScale * scale * multiplier;
+                    
+                    clonedObj.set({
+                        scaleX: finalScale,
+                        scaleY: finalScale,
+                        left: (obj.originalLeft || obj.left) * scale * multiplier,
+                        top: (obj.originalTop || obj.top) * scale * multiplier
+                    });
+                    
+                    tempCanvas.add(clonedObj);
+                });
+            });
+            
+            tempCanvas.renderAll();
+            
+            // データURLを取得
+            const dataURL = tempCanvas.toDataURL('image/png', 1.0);
+            
+            // 一時キャンバスを破棄
+            tempCanvas.dispose();
+            
+            return dataURL;
+        }
+        
+        // 現在のカードをエクスポート（高解像度対応）
         function exportCurrentCard() {
             if (!canvas) {
                 alert('カードが生成されていません。');
@@ -1908,12 +2260,14 @@ pattern_number,title,description,context,solution
             }
             
             try {
-                // 888×600pxでそのままエクスポート
                 const title = document.getElementById('patternTitle').value || 'pattern-card';
                 const safeTitle = title.replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
                 const link = document.createElement('a');
                 link.download = `${safeTitle}.png`;
-                link.href = canvas.toDataURL('image/png');
+                
+                // 高解像度でエクスポート
+                link.href = exportCanvasAtHighResolution(canvas, 1.5);
+                
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -2040,12 +2394,12 @@ pattern_number,title,description,context,solution
                     // レンダリング完了を待つ
                     await new Promise(resolve => setTimeout(resolve, 150));
                     
-                    // ダウンロード（新しいファイル命名規則）
+                    // ダウンロード（高解像度対応）
                     try {
                         const link = document.createElement('a');
                         const filename = `learning_patterns_${patternId}`;
                         link.download = `${filename}.png`;
-                        link.href = canvas.toDataURL('image/png');
+                        link.href = exportCanvasAtHighResolution(canvas, 1.5);
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
@@ -2107,9 +2461,9 @@ pattern_number,title,description,context,solution
                     // レンダリング完了を待つ
                     await new Promise(resolve => setTimeout(resolve, 150));
                     
-                    // 画像データをZIPに追加
+                    // 画像データをZIPに追加（高解像度対応）
                     try {
-                        const dataURL = canvas.toDataURL('image/png');
+                        const dataURL = exportCanvasAtHighResolution(canvas, 1.5);
                         const base64Data = dataURL.split(',')[1]; // data:image/png;base64, を除去
                         
                         // ファイル名：learning_patterns_{番号}.png
