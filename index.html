@@ -1593,10 +1593,25 @@ pattern_number,title,description,context,solution
             const containerElement = document.querySelector('.canvas-container');
             if (!containerElement) return { width: 888, height: 600 };
             
-            // コンテナの利用可能サイズを取得
+            // コンテナの利用可能サイズを取得（初期化時の安全性を向上）
             const containerRect = containerElement.getBoundingClientRect();
-            const containerWidth = containerRect.width - 40; // padding考慮
-            const containerHeight = Math.min(containerRect.height - 40, window.innerHeight * 0.8); // 最大80vh
+            let containerWidth = containerRect.width - 40; // padding考慮
+            let containerHeight = Math.min(containerRect.height - 40, window.innerHeight * 0.8); // 最大80vh
+            
+            // 初期化時にコンテナサイズが0の場合の対処
+            if (containerWidth <= 0 || containerHeight <= 0) {
+                // フォールバック：ビューポートサイズから推定
+                const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+                
+                if (viewportWidth > 1024) {
+                    containerWidth = Math.min(viewportWidth * 0.6, 950); // 60%の幅、最大950px
+                    containerHeight = Math.min(viewportHeight * 0.8, 700); // 80%の高さ、最大700px
+                } else {
+                    containerWidth = viewportWidth - 60; // モバイル・タブレット対応
+                    containerHeight = viewportHeight * 0.6;
+                }
+            }
             
             const aspectRatio = 888 / 600; // 1.48
             const maxWidth = 888;
@@ -1690,6 +1705,15 @@ pattern_number,title,description,context,solution
                 
                 // レスポンシブサイズを取得
                 const { width, height } = getResponsiveCanvasSize();
+                
+                // サイズの妥当性をチェック
+                if (width < 280 || height < 189) {
+                    console.warn('初期化時のキャンバスサイズが小さすぎます。再試行します。', { width, height });
+                    setTimeout(() => {
+                        initCanvas();
+                    }, 200);
+                    return;
+                }
                 
                 // Canvas初期化（レスポンシブサイズ）
                 canvas = new fabric.Canvas('cardCanvas', {
@@ -3141,26 +3165,51 @@ pattern_number,title,description,context,solution
             }
         }
         
-        // 初期化
+        // 初期化（レンダリング完了を待つ改良版）
         function initialize() {
             // Fabric.jsが読み込まれているかチェック
             if (typeof fabric === 'undefined') {
                 setTimeout(initialize, 100);
                 return;
             }
-            initCanvas();
-            initPatternGrid();
-            updateBatchButton();
             
-            // CSV機能の初期化
-            clearCSVData();
-            
-            // フォント初期化
-            currentFont = 'hiragino';
-            document.getElementById('fontSelect').value = 'hiragino';
+            // レンダリング完了を待ってから初期化
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    initCanvas();
+                    initPatternGrid();
+                    updateBatchButton();
+                    
+                    // CSV機能の初期化
+                    clearCSVData();
+                    
+                    // フォント初期化
+                    currentFont = 'hiragino';
+                    document.getElementById('fontSelect').value = 'hiragino';
+                    
+                    // 初期化完了後、さらに一度キャンバスサイズを調整
+                    setTimeout(() => {
+                        if (canvas) {
+                            updateCanvasSize();
+                        }
+                    }, 100);
+                }, 50);
+            });
         }
         
+        // より確実な初期化のための複数のイベントリスナー
         window.addEventListener('load', initialize);
+        
+        // DOM準備完了後にも予備的チェック
+        document.addEventListener('DOMContentLoaded', () => {
+            // loadイベントで初期化していなければ実行
+            setTimeout(() => {
+                if (!canvas) {
+                    console.log('DOMContentLoaded後の予備的初期化を実行');
+                    initialize();
+                }
+            }, 100);
+        });
 
         // AI活用ガイド関連の関数
         function toggleAIGuide() {
