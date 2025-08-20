@@ -1715,32 +1715,50 @@ pattern_number,title,description,context,solution
                     return;
                 }
                 
-                // Canvas初期化（レスポンシブサイズ）
+                // Canvas初期化（高解像度対応）
+                const dpr = window.devicePixelRatio || 1;
+                const scaleFactor = Math.min(dpr, 3); // DPR上限3に制限
+                const scaledWidth = width * scaleFactor;
+                const scaledHeight = height * scaleFactor;
+                
                 canvas = new fabric.Canvas('cardCanvas', {
-                    width: width,
-                    height: height,
+                    width: scaledWidth,
+                    height: scaledHeight,
                     backgroundColor: '#ffffff'
                 });
+                
+                // 高解像度レンダリング設定
+                canvas.contextContainer.imageSmoothingEnabled = true;
+                canvas.contextContainer.imageSmoothingQuality = 'high';
+                if (canvas.contextTop) {
+                    canvas.contextTop.imageSmoothingEnabled = true;
+                    canvas.contextTop.imageSmoothingQuality = 'high';
+                }
+                
+                // 表示サイズは元のサイズを維持
+                canvas.getElement().style.width = width + 'px';
+                canvas.getElement().style.height = height + 'px';
+                canvas.setZoom(scaleFactor);
                 
                 // DOM要素のサイズを完全同期
                 const upperCanvasElement = canvas.upperCanvasEl;
                 const lowerCanvasElement = canvas.lowerCanvasEl;
                 
-                // 表示サイズを設定
+                // 表示サイズを設定（高解像度対応版）
                 canvasElement.style.width = width + 'px';
                 canvasElement.style.height = height + 'px';
                 
-                // upper-canvasとlower-canvasのサイズも明示的に設定
+                // upper-canvasとlower-canvasの高解像度対応
                 if (upperCanvasElement) {
-                    upperCanvasElement.width = width;
-                    upperCanvasElement.height = height;
+                    upperCanvasElement.width = scaledWidth;
+                    upperCanvasElement.height = scaledHeight;
                     upperCanvasElement.style.width = width + 'px';
                     upperCanvasElement.style.height = height + 'px';
                 }
                 
                 if (lowerCanvasElement) {
-                    lowerCanvasElement.width = width;
-                    lowerCanvasElement.height = height;
+                    lowerCanvasElement.width = scaledWidth;
+                    lowerCanvasElement.height = scaledHeight;
                     lowerCanvasElement.style.width = width + 'px';
                     lowerCanvasElement.style.height = height + 'px';
                 }
@@ -1946,6 +1964,16 @@ pattern_number,title,description,context,solution
             const reader = new FileReader();
             reader.onload = function(e) {
                 fabric.Image.fromURL(e.target.result, function(img) {
+                    // 高解像度画像処理設定
+                    img.set({
+                        crossOrigin: 'anonymous'
+                    });
+                    
+                    // 画像補間方式を高品質に設定
+                    if (img.getElement()) {
+                        img.getElement().style.imageRendering = 'high-quality';
+                    }
+                    
                     customBackgroundImage = img;
                     updateCard();
                 });
@@ -2012,14 +2040,22 @@ pattern_number,title,description,context,solution
             // 背景作成
             let background;
             if (currentTemplate === 'custom' && customBackgroundImage) {
-                // カスタム背景画像を使用
+                // カスタム背景画像を使用（高解像度対応）
                 background = fabric.util.object.clone(customBackgroundImage);
+                
+                // 高解像度画像の補間設定
+                if (background.getElement()) {
+                    background.getElement().style.imageRendering = 'high-quality';
+                }
+                
                 background.set({
                     left: 0,
                     top: 0,
                     scaleX: width / background.width,
                     scaleY: height / background.height,
-                    selectable: false
+                    selectable: false,
+                    // スケール時の品質保持
+                    strokeWidth: 0
                 });
             } else {
                 // グラデーション背景
@@ -2247,6 +2283,10 @@ pattern_number,title,description,context,solution
                 backgroundColor: targetCanvas.backgroundColor
             });
             
+            // 高解像度レンダリング設定
+            tempCanvas.contextContainer.imageSmoothingEnabled = true;
+            tempCanvas.contextContainer.imageSmoothingQuality = 'high';
+            
             // オブジェクトを高解像度でコピー
             targetCanvas.getObjects().forEach(obj => {
                 obj.clone((clonedObj) => {
@@ -2289,8 +2329,8 @@ pattern_number,title,description,context,solution
                 const link = document.createElement('a');
                 link.download = `${safeTitle}.png`;
                 
-                // 高解像度でエクスポート
-                link.href = exportCanvasAtHighResolution(canvas, 1.5);
+                // 高解像度でエクスポート（2倍解像度）
+                link.href = exportCanvasAtHighResolution(canvas, 2.0);
                 
                 document.body.appendChild(link);
                 link.click();
@@ -2423,7 +2463,7 @@ pattern_number,title,description,context,solution
                         const link = document.createElement('a');
                         const filename = `learning_patterns_${patternId}`;
                         link.download = `${filename}.png`;
-                        link.href = exportCanvasAtHighResolution(canvas, 1.5);
+                        link.href = exportCanvasAtHighResolution(canvas, 2.0);
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
@@ -2487,7 +2527,7 @@ pattern_number,title,description,context,solution
                     
                     // 画像データをZIPに追加（高解像度対応）
                     try {
-                        const dataURL = exportCanvasAtHighResolution(canvas, 1.5);
+                        const dataURL = exportCanvasAtHighResolution(canvas, 2.0);
                         const base64Data = dataURL.split(',')[1]; // data:image/png;base64, を除去
                         
                         // ファイル名：learning_patterns_{番号}.png
