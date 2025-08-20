@@ -910,10 +910,19 @@
             align-items: center;
             justify-content: center;
             margin: 20px 0 30px 0;
-            padding: 20px;
+            padding: 20px 15px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+
+        @media (max-width: 570px) {
+            .step-indicator {
+                padding: 15px 10px;
+                justify-content: flex-start;
+            }
         }
 
         .step-item {
@@ -921,7 +930,14 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            min-width: 100px;
+            min-width: 80px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 570px) {
+            .step-item {
+                min-width: 90px;
+            }
         }
 
         .step-circle {
@@ -937,6 +953,15 @@
             font-size: 16px;
             margin-bottom: 8px;
             transition: all 0.3s ease;
+        }
+
+        @media (max-width: 570px) {
+            .step-circle {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
         }
 
         .step-item.active .step-circle {
@@ -956,6 +981,16 @@
             color: #6c757d;
         }
 
+        @media (max-width: 570px) {
+            .step-label {
+                font-size: 10px;
+                line-height: 1.2;
+                width: 100%;
+                word-wrap: break-word;
+                hyphens: auto;
+            }
+        }
+
         .step-item.active .step-label {
             color: #667eea;
             font-weight: 600;
@@ -964,7 +999,113 @@
         .step-arrow {
             color: #dee2e6;
             font-size: 20px;
-            margin: 0 10px;
+            margin: 0 8px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 570px) {
+            .step-arrow {
+                margin: 0 5px;
+                font-size: 16px;
+            }
+        }
+
+        /* カスタムモーダル */
+        .custom-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background-color: #f5f5f5;
+        }
+
+        .modal-body {
+            text-align: left;
+            line-height: 1.6;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .modal-body h3 {
+            color: #667eea;
+            margin: 20px 0 10px 0;
+            font-size: 16px;
+        }
+
+        .modal-body ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .modal-body li {
+            margin: 8px 0;
+        }
+
+        @media (max-width: 570px) {
+            .modal-content {
+                margin: 10px;
+                width: calc(100% - 20px);
+                max-height: 90vh;
+                padding: 15px;
+            }
+            
+            .modal-title {
+                font-size: 16px;
+            }
+            
+            .modal-body {
+                font-size: 13px;
+            }
         }
 
         /* 現在のステップ情報 */
@@ -1439,6 +1580,9 @@
         .format-example code {
             color: #333;
             font-size: 13px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
         }
 
         .format-details {
@@ -1773,7 +1917,7 @@
                         <div class="nav-option" onclick="scrollToSection('csv-section')">
                             <div class="nav-icon">📁</div>
                             <div class="nav-content">
-                                <h3>既存ファイルを使用</h3>
+                                <h3>既存ファイル</h3>
                                 <p>CSVファイルをお持ちの場合</p>
                                 <span class="nav-badge recommended">おすすめ</span>
                             </div>
@@ -1783,7 +1927,7 @@
                             <div class="nav-icon">🤖</div>
                             <div class="nav-content">
                                 <h3>AIで新規作成</h3>
-                                <p>書籍やテーマからAIが生成</p>
+                                <p>書籍やテーマから生成AIで生成</p>
                                 <span class="nav-badge">初回向け</span>
                             </div>
                             <div class="nav-arrow">→</div>
@@ -4137,66 +4281,76 @@ pattern_number,title,description,context,solution
         // AIヘルプ表示
         function showAIHelp() {
             const helpContent = `
-【AIを活用したパターンカード作成の流れ】
+                <h3>🤖 AIを活用したパターンカード作成の流れ</h3>
+                
+                <h3>1️⃣ テンプレート選択</h3>
+                <ul>
+                    <li>目的に応じたプロンプトテンプレートを選択</li>
+                    <li>書籍名、URL、テーマなどを具体的に指定</li>
+                </ul>
 
-1️⃣ テンプレート選択
-   • 目的に応じたプロンプトテンプレートを選択
-   • 書籍名、URL、テーマなどを具体的に指定
+                <h3>2️⃣ AIツールで実行</h3>
+                <ul>
+                    <li>ChatGPT、Claude、Gemini等のAIツールを使用</li>
+                    <li>プロンプトをそのまま貼り付けて実行</li>
+                    <li>CSVファイルのダウンロードを依頼</li>
+                </ul>
 
-2️⃣ AIツールで実行
-   • ChatGPT、Claude、Gemini等のAIツールを使用
-   • プロンプトをそのまま貼り付けて実行
-   • CSVファイルのダウンロードを依頼
+                <h3>3️⃣ ファイル読み込み</h3>
+                <ul>
+                    <li>生成されたCSVまたはTXTファイルを読み込み</li>
+                    <li>ドラッグ&ドロップまたはファイル選択</li>
+                </ul>
 
-3️⃣ ファイル読み込み
-   • 生成されたCSVまたはTXTファイルを読み込み
-   • ドラッグ&ドロップまたはファイル選択
+                <h3>4️⃣ カード生成</h3>
+                <ul>
+                    <li>データ確認後、一括生成ボタンをクリック</li>
+                    <li>お好みのデザインテンプレートで出力</li>
+                </ul>
 
-4️⃣ カード生成
-   • データ確認後、一括生成ボタンをクリック
-   • お好みのデザインテンプレートで出力
-
-💡 よくある質問：
-• Q: どのAIツールが使えますか？
-  A: ChatGPT、Claude、Gemini等、主要なAIツールで利用可能
-
-• Q: .txtファイルでも大丈夫？
-  A: はい。CSV形式の内容であれば.txtファイルも読み込み可能
-
-• Q: エラーが出た場合は？
-  A: ファイル形式やデータ形式を確認し、テンプレートと同じ形式かチェック
+                <h3>💡 よくある質問</h3>
+                <ul>
+                    <li><strong>Q: どのAIツールが使えますか？</strong><br>
+                        A: ChatGPT、Claude、Gemini等、主要なAIツールで利用可能</li>
+                    <li><strong>Q: .txtファイルでも大丈夫？</strong><br>
+                        A: はい。CSV形式の内容であれば.txtファイルも読み込み可能</li>
+                    <li><strong>Q: エラーが出た場合は？</strong><br>
+                        A: ファイル形式やデータ形式を確認し、テンプレートと同じ形式かチェック</li>
+                </ul>
             `;
             
-            alert(helpContent);
+            showModal('AIを活用したパターンカード作成ガイド', helpContent);
         }
 
         // CSVヘルプ表示
         function showCSVHelp() {
             const helpContent = `
-【CSV読み込み機能の使い方】
+                <h3>📁 CSV読み込み機能の使い方</h3>
+                
+                <h3>📁 対応ファイル形式</h3>
+                <ul>
+                    <li><strong>.csv ファイル:</strong> Excel等で作成した標準的なCSVファイル</li>
+                    <li><strong>.txt ファイル:</strong> AIツールで作成されたテキストファイル</li>
+                </ul>
+                <p>※どちらもCSV形式（カンマ区切り）の内容が必要</p>
 
-📁 対応ファイル形式：
-• .csv ファイル：Excel等で作成した標準的なCSVファイル
-• .txt ファイル：AIツールで作成されたテキストファイル
-  ※どちらもCSV形式（カンマ区切り）の内容が必要
+                <h3>📋 必要なデータ形式</h3>
+                <p><code>pattern_number,title,description,context,solution</code></p>
 
-📋 必要なデータ形式：
-pattern_number,title,description,context,solution
-
-🔧 トラブルシューティング：
-• ファイルが読み込めない場合
-  → ファイル形式とデータ形式を確認
-  → 文字エンコードをUTF-8に設定
-
-• データが正しく表示されない場合
-  → CSV形式（カンマ区切り）になっているか確認
-  → 各項目にダブルクォートが含まれていないか確認
-
-• 文字化けする場合
-  → ファイルを一度テキストエディタで開き、UTF-8で保存し直す
+                <h3>🔧 トラブルシューティング</h3>
+                <ul>
+                    <li><strong>ファイルが読み込めない場合</strong><br>
+                        → ファイル形式とデータ形式を確認<br>
+                        → 文字エンコードをUTF-8に設定</li>
+                    <li><strong>データが正しく表示されない場合</strong><br>
+                        → CSV形式（カンマ区切り）になっているか確認<br>
+                        → 各項目にダブルクォートが含まれていないか確認</li>
+                    <li><strong>文字化けする場合</strong><br>
+                        → ファイルを一度テキストエディタで開き、UTF-8で保存し直す</li>
+                </ul>
             `;
             
-            alert(helpContent);
+            showModal('CSV読み込み機能ガイド', helpContent);
         }
 
         // ドラッグ&ドロップ機能
@@ -4335,6 +4489,40 @@ pattern_number,title,description,context,solution
                 updateStepIndicator(3);
             }
         };
+
+        // カスタムモーダル表示
+        function showModal(title, content) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalBody').innerHTML = content;
+            document.getElementById('customModal').style.display = 'block';
+        }
+
+        // モーダル閉じる
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+        }
+
+        // モーダル外クリックで閉じる
+        window.onclick = function(event) {
+            const modal = document.getElementById('customModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
     </script>
+
+    <!-- カスタムモーダル -->
+    <div id="customModal" class="custom-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">ヘルプ</div>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- コンテンツがJavaScriptで挿入される -->
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
