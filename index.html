@@ -105,7 +105,8 @@
             margin-top: 20px;
             width: 100%;
             max-width: 100%;
-            align-items: flex-start;
+            align-items: stretch;
+            min-height: calc(100vh - 120px);
         }
         
         .sidebar {
@@ -120,6 +121,8 @@
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            height: fit-content;
+            min-height: 100%;
         }
         
         .sidebar {
@@ -128,8 +131,7 @@
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             height: fit-content;
-            position: sticky;
-            top: 20px;
+            min-height: 100%;
         }
         
         
@@ -786,6 +788,48 @@
             display: block;
         }
 
+        /* プリセット一括生成セクション開閉スタイル */
+        .preset-batch-content {
+            display: none;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .preset-batch-content.expanded {
+            display: block;
+            opacity: 1;
+            max-height: 2000px;
+        }
+
+        .preset-batch-header:hover {
+            background: #f0f4ff !important;
+            border-color: #d1e7dd !important;
+        }
+
+        /* カード操作ボタンスタイル */
+        .card-actions {
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid #e8f0fe;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .card-actions .btn {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card-actions .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
         .template-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1159,12 +1203,12 @@
         .file-drop-zone {
             border: 2px dashed #667eea;
             border-radius: 12px;
-            padding: 40px 20px;
+            padding: 25px 15px;
             text-align: center;
             background: linear-gradient(135deg, #f8f9ff, #e8f4fd);
             transition: all 0.3s ease;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .file-drop-zone:hover,
@@ -1182,13 +1226,13 @@
         }
 
         .drop-zone-icon {
-            font-size: 48px;
+            font-size: 32px;
             color: #667eea;
         }
 
         .drop-zone-text strong {
             color: #667eea;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .drop-zone-formats {
@@ -1684,14 +1728,6 @@
     <div class="header">
         <div class="header-content">
             <h1>パターン・カード生成ツール</h1>
-            <div class="header-actions">
-                <button class="btn btn-secondary" onclick="resetAll()">
-                    🔄 リセット
-                </button>
-                <button class="btn btn-primary" onclick="exportCurrentCard()">
-                    📂 現在のカードを保存
-                </button>
-            </div>
         </div>
     </div>
 
@@ -1895,6 +1931,16 @@
                 <div class="form-group">
                     <label for="patternSolution">工夫・トライアル</label>
                     <textarea id="patternSolution" placeholder="課題に対する工夫や試してみたいことを記述..." oninput="updateCard()"></textarea>
+                </div>
+
+                <!-- カード操作ボタン -->
+                <div class="card-actions">
+                    <button class="btn btn-secondary" onclick="resetAll()" style="width: 100%; margin-bottom: 10px;">
+                        🔄 リセット
+                    </button>
+                    <button class="btn btn-primary" onclick="exportCurrentCard()" style="width: 100%;">
+                        📂 現在のカードを保存
+                    </button>
                 </div>
             </div>
 
@@ -2124,7 +2170,7 @@ pattern_number,title,description,context,solution
                     </div>
 
                     <!-- CSV一括読み込みセクション -->
-                    <div class="csv-section" style="margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #f1f3f4;">
+                    <div class="csv-section" style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid #f1f3f4;">
                         <div class="csv-header">
                             <h2>📁 既存ファイルを使用してカード作成</h2>
                             <div class="csv-badges">
@@ -2190,13 +2236,16 @@ pattern_number,title,description,context,solution
                             </div>
                         </div>
 
-                        <div class="csv-controls" style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
+                        <div class="csv-controls" style="display: flex; gap: 12px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
                             <input type="file" id="csvFileInput" accept=".csv,.txt" style="display: none;" onchange="handleCSVUpload(event)">
-                            <button class="btn btn-secondary" onclick="downloadCSVTemplate()" title="サンプルCSVファイルをダウンロード">
+                            <button class="btn btn-secondary" onclick="downloadCSVTemplate()" title="サンプルCSVファイルをダウンロード" style="font-size: 12px; padding: 8px 12px;">
                                 📋 テンプレートDL
                             </button>
-                            <button class="btn btn-secondary" onclick="showCSVHelp()" title="CSV読み込みのヘルプを表示">
+                            <button class="btn btn-secondary" onclick="showCSVHelp()" title="CSV読み込みのヘルプを表示" style="font-size: 12px; padding: 8px 12px;">
                                 ❓ ヘルプ
+                            </button>
+                            <button class="btn btn-primary" onclick="openAIGuideSection()" title="AIを使ってCSVデータを生成" style="font-size: 12px; padding: 8px 12px;">
+                                🤖 AIで生成
                             </button>
                             
                             <!-- ファイル名カスタマイズ機能 -->
@@ -2292,21 +2341,17 @@ pattern_number,title,description,context,solution
                             </div>
                         </div>
                         
-                        <!-- 相互リンク -->
-                        <div class="section-link">
-                            <div class="link-content">
-                                <span>🤖 CSVファイルをお持ちでない場合</span>
-                                <button class="link-button-primary" onclick="scrollToSection('ai-guide-section')">
-                                    ← AIでデータ生成から始める
-                                </button>
-                            </div>
-                        </div>
                     </div>
 
-                    <h2 style="margin-bottom: 20px; color: #444;">パターンカード（プリセット）一括生成</h2>
+                    <div class="preset-batch-header" onclick="togglePresetBatch()" style="cursor: pointer; margin-bottom: 20px; padding: 15px; background: #f8f9ff; border: 2px solid #e1e8ed; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
+                        <h2 style="margin: 0; color: #444;">📦 パターンカード（プリセット）一括生成</h2>
+                        <span id="presetBatchToggle" style="font-size: 20px; color: #666; transition: transform 0.3s ease;">▼</span>
+                    </div>
                     
-                    <!-- プリセット版ダウンロード方式選択 -->
-                    <div id="presetDownloadMethodSection" style="margin-bottom: 15px; padding: 10px; background: #f8f9ff; border: 1px solid #e1e8ed; border-radius: 6px;">
+                    <!-- プリセット一括生成コンテンツ（開閉対象） -->
+                    <div id="presetBatchContent" class="preset-batch-content">
+                        <!-- プリセット版ダウンロード方式選択 -->
+                        <div id="presetDownloadMethodSection" style="margin-bottom: 15px; padding: 10px; background: #f8f9ff; border: 1px solid #e1e8ed; border-radius: 6px;">
                         <label style="font-size: 14px; color: #444; margin-bottom: 8px; display: block;">📦 ダウンロード方式:</label>
                         <div style="display: flex; gap: 15px; align-items: center;">
                             <label style="display: flex; align-items: center; cursor: pointer;">
@@ -2342,6 +2387,7 @@ pattern_number,title,description,context,solution
                     <div class="pattern-grid" id="patternGrid">
                         <!-- パターン選択項目は JavaScript で生成 -->
                     </div>
+                    </div> <!-- プリセット一括生成コンテンツ終了 -->
                 </div>
             </div>
         </div>
@@ -4501,6 +4547,24 @@ pattern_number,title,description,context,solution
             
             // セクションまでスクロール
             scrollToSection('ai-guide-section');
+        }
+
+        // プリセット一括生成セクション開閉
+        function togglePresetBatch() {
+            const content = document.getElementById('presetBatchContent');
+            const toggle = document.getElementById('presetBatchToggle');
+            
+            if (content && toggle) {
+                if (content.classList.contains('expanded')) {
+                    content.classList.remove('expanded');
+                    toggle.textContent = '▼';
+                    toggle.style.transform = 'rotate(0deg)';
+                } else {
+                    content.classList.add('expanded');
+                    toggle.textContent = '▲';
+                    toggle.style.transform = 'rotate(180deg)';
+                }
+            }
         }
 
         // 初期化
