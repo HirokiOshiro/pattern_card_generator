@@ -1927,7 +1927,7 @@
                             </div>
                             <div class="nav-arrow">→</div>
                         </div>
-                        <div class="nav-option" onclick="scrollToSection('ai-guide-section')">
+                        <div class="nav-option" onclick="openAIGuideSection()">
                             <div class="nav-icon">🤖</div>
                             <div class="nav-content">
                                 <h3>AIで新規作成</h3>
@@ -4486,6 +4486,21 @@ pattern_number,title,description,context,solution
                     section.style.boxShadow = 'none';
                 }, 1000);
             }
+        }
+        
+        // AIガイドセクションを開いてスクロール
+        function openAIGuideSection() {
+            // まずAIガイドセクションを展開
+            const content = document.getElementById('aiGuideContent');
+            const toggle = document.getElementById('aiGuideToggle');
+            
+            if (content && !content.classList.contains('expanded')) {
+                content.classList.add('expanded');
+                if (toggle) toggle.textContent = '▲';
+            }
+            
+            // セクションまでスクロール
+            scrollToSection('ai-guide-section');
         }
 
         // 初期化
