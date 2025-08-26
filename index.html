@@ -1798,7 +1798,7 @@
                     <label for="backgroundUpload">背景画像をアップロード</label>
                     <input type="file" id="backgroundUpload" accept="image/*" onchange="handleBackgroundUpload(event)">
                     <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">
-                        推奨サイズ: 888×600px または同じ比率の画像
+                        推奨サイズ: 選択した解像度に応じて自動調整されます（アスペクト比1.48:1推奨）
                     </small>
                 </div>
 
@@ -1865,11 +1865,15 @@
 
                 <div class="form-group">
                     <label for="resolutionSelect">出力サイズ</label>
-                    <select id="resolutionSelect" disabled>
-                        <option value="1.5" selected>中解像度 (888×600px) - 印刷最適化</option>
+                    <select id="resolutionSelect" onchange="updateResolution()">
+                        <option value="1">標準解像度 (888×600px)</option>
+                        <option value="1.5" selected>高解像度 (1332×900px)</option>
+                        <option value="2">Full HD対応 (1776×1200px)</option>
+                        <option value="2.5">QHD対応 (2220×1500px)</option>
+                        <option value="3">4K対応 (2664×1800px)</option>
                     </select>
                     <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">
-                        印刷とWeb表示の両方に適した最適化サイズに固定されています
+                        高解像度ほど文字が鮮明になりますが、ファイルサイズも大きくなります
                     </small>
                 </div>
 
@@ -1900,7 +1904,7 @@
                 <div class="preview-section">
                     <div class="preview-header">
                         <h2>プレビュー</h2>
-                        <span style="color: #666; font-size: 14px;">固定サイズ（888×600px）</span>
+                        <span id="previewSizeInfo" style="color: #666; font-size: 14px;">高解像度（1332×900px）</span>
                     </div>
                     <div class="canvas-container">
                         <canvas id="cardCanvas"></canvas>
@@ -2351,9 +2355,39 @@ pattern_number,title,description,context,solution
         let csvData = []; // CSV読み込みデータ
         let currentFont = 'hiragino'; // 選択中のフォント
         
-        // 中解像度に固定（888×600px）
+        // 基準サイズ（888×600px）- 解像度倍率で拡大
         const baseWidth = 888;
         const baseHeight = 600;
+        
+        // 現在の解像度倍率を取得
+        function getCurrentResolutionMultiplier() {
+            const select = document.getElementById('resolutionSelect');
+            return parseFloat(select.value) || 1.5;
+        }
+        
+        // 解像度変更時の処理
+        function updateResolution() {
+            const multiplier = getCurrentResolutionMultiplier();
+            const actualWidth = Math.round(baseWidth * multiplier);
+            const actualHeight = Math.round(baseHeight * multiplier);
+            
+            // プレビューサイズ情報を更新
+            const sizeInfo = document.getElementById('previewSizeInfo');
+            if (sizeInfo) {
+                const resolutionNames = {
+                    1: '標準解像度',
+                    1.5: '高解像度', 
+                    2: 'Full HD対応',
+                    2.5: 'QHD対応',
+                    3: '4K対応'
+                };
+                sizeInfo.textContent = `${resolutionNames[multiplier] || '高解像度'}（${actualWidth}×${actualHeight}px）`;
+            }
+            
+            // キャンバスを再初期化
+            initializeCanvas();
+            updateCard();
+        }
         
         // 文字幅計算・改行機能
         function isFullWidth(char) {
@@ -2613,7 +2647,8 @@ pattern_number,title,description,context,solution
                 
                 // Canvas初期化（高解像度対応）
                 const dpr = window.devicePixelRatio || 1;
-                const scaleFactor = Math.min(dpr, 3); // DPR上限3に制限
+                const resolutionMultiplier = getCurrentResolutionMultiplier();
+                const scaleFactor = Math.min(dpr * resolutionMultiplier, 6); // 最大6倍まで対応
                 const scaledWidth = width * scaleFactor;
                 const scaledHeight = height * scaleFactor;
                 
@@ -2892,8 +2927,8 @@ pattern_number,title,description,context,solution
             }
         }
         
-        // カード更新
-        function updateCard() {
+        // カード更新（オプションでpattern_numberを指定可能）
+        function updateCard(overridePatternNumber = null) {
             if (!canvas) {
                 console.warn('Canvas未初期化のため、カード更新をスキップします');
                 return;
@@ -2904,7 +2939,8 @@ pattern_number,title,description,context,solution
                 const description = document.getElementById('patternDescription').value || '';
                 const context = document.getElementById('patternContext').value || '';
                 const solution = document.getElementById('patternSolution').value || '';
-                const patternNumber = document.getElementById('patternSelect').value || '';
+                // CSV処理時はoverride値を優先、通常時はUI値を使用
+                const patternNumber = overridePatternNumber || document.getElementById('patternSelect').value || '';
                 
                 canvas.clear();
                 
@@ -3167,9 +3203,10 @@ pattern_number,title,description,context,solution
             const currentWidth = targetCanvas.getWidth();
             const currentHeight = targetCanvas.getHeight();
             
-            // 高解像度の基準サイズ（888×600）を使用
-            const exportWidth = baseWidth;
-            const exportHeight = baseHeight;
+            // 高解像度の基準サイズ（解像度倍率適用）を使用
+            const resolutionMultiplier = getCurrentResolutionMultiplier();
+            const exportWidth = baseWidth * resolutionMultiplier;
+            const exportHeight = baseHeight * resolutionMultiplier;
             const scale = exportWidth / currentWidth;
             
             // 一時的な高解像度キャンバスを作成
@@ -3203,7 +3240,7 @@ pattern_number,title,description,context,solution
             
             tempCanvas.renderAll();
             
-            // データURLを取得
+            // 最高品質でデータURLを取得
             const dataURL = tempCanvas.toDataURL('image/png', 1.0);
             
             // 一時キャンバスを破棄
@@ -3825,18 +3862,8 @@ pattern_number,title,description,context,solution
                     document.getElementById('patternContext').value = row.context;
                     document.getElementById('patternSolution').value = row.solution;
                     
-                    // パターン番号を設定（UIには反映させない）
-                    // 注意: パターン選択UIは変更せず、内部的にのみ処理
-                    if (row.pattern_number) {
-                        // 内部的にパターン番号を保持（UIは変更しない）
-                        // updateCard()で必要な場合は別途対応
-                    }
-                    
-                    // 現在選択されているテンプレートを維持（変更しない）
-                    // selectTemplate(currentTemplate); // 不要：既に選択済み
-                    
-                    // カード生成
-                    updateCard();
+                    // カード生成（pattern_numberを直接渡す）
+                    updateCard(row.pattern_number);
                     
                     // レンダリング完了を待つ
                     await new Promise(resolve => setTimeout(resolve, 200));
@@ -3849,7 +3876,7 @@ pattern_number,title,description,context,solution
                         // 新しいファイル命名規則：{グループ名}_{カード番号}.png
                         const filename = `${safeGroupName}_${cardNumber}`;
                         link.download = `${filename}.png`;
-                        link.href = canvas.toDataURL('image/png');
+                        link.href = exportCanvasAtHighResolution(canvas, 1.0);
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
@@ -3909,22 +3936,15 @@ pattern_number,title,description,context,solution
                     document.getElementById('patternContext').value = row.context;
                     document.getElementById('patternSolution').value = row.solution;
                     
-                    // パターン番号を設定（UIには反映させない）
-                    // 注意: パターン選択UIは変更せず、内部的にのみ処理
-                    if (row.pattern_number) {
-                        // 内部的にパターン番号を保持（UIは変更しない）
-                        // updateCard()で必要な場合は別途対応
-                    }
-                    
-                    // カード生成
-                    updateCard();
+                    // カード生成（pattern_numberを直接渡す）
+                    updateCard(row.pattern_number);
                     
                     // レンダリング完了を待つ
                     await new Promise(resolve => setTimeout(resolve, 200));
                     
                     // 画像データをZIPに追加
                     try {
-                        const dataURL = canvas.toDataURL('image/png');
+                        const dataURL = exportCanvasAtHighResolution(canvas, 1.0);
                         const base64Data = dataURL.split(',')[1]; // data:image/png;base64, を除去
                         
                         // カード番号の決定（CSV番号がある場合はそれを使用、なければ連番）
@@ -4045,14 +4065,14 @@ pattern_number,title,description,context,solution
             if (editingCSVIndex === -1) return;
             
             // 編集中の値をメインフォームに反映
-            document.getElementById('patternSelect').value = document.getElementById('csvEditNumber').value;
             document.getElementById('patternTitle').value = document.getElementById('csvEditTitle').value;
             document.getElementById('patternDescription').value = document.getElementById('csvEditDescription').value;
             document.getElementById('patternContext').value = document.getElementById('csvEditContext').value;
             document.getElementById('patternSolution').value = document.getElementById('csvEditSolution').value;
             
-            // カードを更新
-            updateCard();
+            // カードを更新（pattern_numberを直接渡す）
+            const patternNumber = document.getElementById('csvEditNumber').value || '';
+            updateCard(patternNumber);
         }
         
         function applyCSVEdit() {
