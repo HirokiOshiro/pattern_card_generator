@@ -2569,7 +2569,7 @@
 
                 <div class="form-group">
                     <label for="seriesName">シリーズ名</label>
-                    <input type="text" id="seriesName" placeholder="シリーズ名を入力（任意）" oninput="updateCard()">
+                    <input type="text" id="seriesName" placeholder="シリーズ名を入力（任意）" oninput="updateCard(); syncMainToBatchFields()">
                 </div>
 
                 <div class="form-group">
@@ -2594,12 +2594,12 @@
 
                 <div class="form-group">
                     <label for="creatorInfo">作成者情報</label>
-                    <input type="text" id="creatorInfo" placeholder="作成者名を入力（任意）" oninput="updateCard()">
+                    <input type="text" id="creatorInfo" placeholder="作成者名を入力（任意）" oninput="updateCard(); syncMainToBatchFields()">
                 </div>
 
                 <div class="form-group">
                     <label for="creatorIcon">作成者アイコン</label>
-                    <input type="file" id="creatorIcon" accept="image/*" onchange="handleCreatorIconUpload(event)">
+                    <input type="file" id="creatorIcon" accept="image/*" onchange="handleCreatorIconUpload(event); syncMainIconToBatch(event)">
                     <small class="form-text">
                         JPEGまたはPNG形式の画像ファイルをアップロードしてください（任意）
                     </small>
@@ -3119,6 +3119,37 @@ pattern_number,title,description,context,solution
                                                    style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 180px;"
                                                    title="ファイル名の接頭辞となります（例：プロジェクトA_1.png）">
                                             <small style="color: #666; font-size: 12px; white-space: nowrap;">→ {グループ名}_{番号}.png</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- シリーズ・作成者情報セクション -->
+                                <div class="workflow-subsection">
+                                    <h4 class="subsection-title">👤 シリーズ・作成者情報</h4>
+                                    <div class="subsection-content">
+                                        <!-- Series Name -->
+                                        <div style="margin-bottom: 12px;">
+                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">シリーズ名（任意）</label>
+                                            <input type="text" id="batchSeriesName" placeholder="例：プロジェクトA" 
+                                                   style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 200px;"
+                                                   oninput="syncBatchToMainFields()">
+                                        </div>
+                                        
+                                        <!-- Creator Info -->
+                                        <div style="margin-bottom: 12px;">
+                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">作成者情報（任意）</label>
+                                            <input type="text" id="batchCreatorInfo" placeholder="例：田中太郎" 
+                                                   style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 200px;"
+                                                   oninput="syncBatchToMainFields()">
+                                        </div>
+                                        
+                                        <!-- Creator Icon -->
+                                        <div>
+                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">作成者アイコン（任意）</label>
+                                            <input type="file" id="batchCreatorIcon" accept="image/*" 
+                                                   style="padding: 4px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; width: 200px;"
+                                                   onchange="handleBatchCreatorIconUpload(event)">
+                                            <small style="color: #666; font-size: 11px; display: block; margin-top: 2px;">JPEGまたはPNG形式</small>
                                         </div>
                                     </div>
                                 </div>
@@ -3811,6 +3842,52 @@ pattern_number,title,description,context,solution
             reader.readAsDataURL(file);
         }
         
+        // バッチ作成者アイコンアップロード処理
+        function handleBatchCreatorIconUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                fabric.Image.fromURL(e.target.result, function(img) {
+                    img.set({
+                        crossOrigin: 'anonymous'
+                    });
+                    
+                    if (img.getElement()) {
+                        img.getElement().style.imageRendering = 'high-quality';
+                    }
+                    
+                    creatorIconImage = img;
+                    // 左側フィールドと同期
+                    const mainIconField = document.getElementById('creatorIcon');
+                    mainIconField.files = event.target.files;
+                    updateCard();
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // バッチフィールドから左側フィールドへの同期
+        function syncBatchToMainFields() {
+            document.getElementById('seriesName').value = document.getElementById('batchSeriesName').value;
+            document.getElementById('creatorInfo').value = document.getElementById('batchCreatorInfo').value;
+            updateCard();
+        }
+        
+        // 左側フィールドからバッチフィールドへの同期
+        function syncMainToBatchFields() {
+            document.getElementById('batchSeriesName').value = document.getElementById('seriesName').value;
+            document.getElementById('batchCreatorInfo').value = document.getElementById('creatorInfo').value;
+        }
+        
+        // 左側アイコンからバッチアイコンへの同期
+        function syncMainIconToBatch(event) {
+            const batchIconField = document.getElementById('batchCreatorIcon');
+            // FileListは読み取り専用なので、視覚的な同期のみ行う
+            // 実際のファイルデータは creatorIconImage 変数で共有される
+        }
+        
         // パターンデータ読み込み
         function loadPatternData() {
             const select = document.getElementById('patternSelect');
@@ -3998,7 +4075,7 @@ pattern_number,title,description,context,solution
             
             const titleBg = new fabric.Rect({
                 left: titleLeft,
-                top: 38 * scaleFactor,
+                top: 45 * scaleFactor, // 7px下に移動
                 width: titleWidth,
                 height: 60 * scaleFactor,
                 fill: titleGradient,
@@ -4017,7 +4094,7 @@ pattern_number,title,description,context,solution
             // タイトル - スケール調整対応
             const titleText = new fabric.Text(title, {
                 left: (patternNumber ? 125 : 60) * scaleFactor,
-                top: 52 * scaleFactor,
+                top: 59 * scaleFactor, // 7px下に移動（背景と同じオフセット）
                 fontSize: 36 * scaleFactor,
                 fill: '#333333',
                 fontFamily: getCurrentFontFamily(),
@@ -4141,13 +4218,14 @@ pattern_number,title,description,context,solution
             if (creatorInfo) {
                 creatorText = new fabric.Text(creatorInfo, {
                     left: (creatorIconImage ? 805 : 843) * scaleFactor, // アイコンがある場合はさらに左に移動（余白拡大）
-                    top: (baseHeight - 42) * scaleFactor, // 少し上に調整
+                    top: (baseHeight - 38) * scaleFactor, // 背景中央揃えに調整
                     fontSize: 12 * scaleFactor,
                     fill: '#888888',
                     fontFamily: getCurrentFontFamily(),
                     fontWeight: 'normal',
                     textAlign: 'right',
                     originX: 'right',
+                    originY: 'center', // 垂直中央揃え
                     selectable: false
                 });
                 creatorTextWidth = creatorText.width;
@@ -4650,6 +4728,9 @@ pattern_number,title,description,context,solution
             document.getElementById('seriesName').value = '';
             document.getElementById('creatorInfo').value = '';
             document.getElementById('creatorIcon').value = '';
+            document.getElementById('batchSeriesName').value = '';
+            document.getElementById('batchCreatorInfo').value = '';
+            document.getElementById('batchCreatorIcon').value = '';
             document.getElementById('fontSelect').value = 'hiragino'; // フォントもリセット
             currentFont = 'hiragino';
             creatorIconImage = null; // 作成者アイコンもクリア
