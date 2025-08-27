@@ -2568,7 +2568,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="seriesName">シリーズ名</label>
+                    <label for="seriesName">シリーズ名 *カード左上に表示</label>
                     <input type="text" id="seriesName" placeholder="シリーズ名を入力（任意）" oninput="updateCard(); syncMainToBatchFields()">
                 </div>
 
@@ -2593,12 +2593,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="creatorInfo">作成者情報</label>
+                    <label for="creatorInfo">作成者情報 *カード右下に表示</label>
                     <input type="text" id="creatorInfo" placeholder="作成者名を入力（任意）" oninput="updateCard(); syncMainToBatchFields()">
                 </div>
 
                 <div class="form-group">
-                    <label for="creatorIcon">作成者アイコン</label>
+                    <label for="creatorIcon">作成者アイコン *カード右下に表示</label>
                     <input type="file" id="creatorIcon" accept="image/*" onchange="handleCreatorIconUpload(event); syncMainIconToBatch(event)">
                     <small class="form-text">
                         JPEGまたはPNG形式の画像ファイルをアップロードしてください（任意）
@@ -3112,7 +3112,7 @@ pattern_number,title,description,context,solution
                             <div class="workflow-content" style="flex-direction: column; align-items: stretch;">
                                 <!-- カードグループ名セクション -->
                                 <div class="workflow-subsection">
-                                    <h4 class="subsection-title">📝 カードグループ名</h4>
+                                    <h4 class="subsection-title">📝 カードグループ名 *ファイルのタイトル</h4>
                                     <div class="subsection-content">
                                         <div style="display: flex; align-items: center; gap: 10px; justify-content: flex-start;" id="fileNameCustomization" class="file-name-controls">
                                             <input type="text" id="cardGroupName" placeholder="例：プロジェクトA" 
@@ -3129,7 +3129,7 @@ pattern_number,title,description,context,solution
                                     <div class="subsection-content">
                                         <!-- Series Name -->
                                         <div style="margin-bottom: 12px;">
-                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">シリーズ名（任意）</label>
+                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">シリーズ名（任意） *カード左上に表示</label>
                                             <input type="text" id="batchSeriesName" placeholder="例：プロジェクトA" 
                                                    style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 200px;"
                                                    oninput="syncBatchToMainFields()">
@@ -3137,7 +3137,7 @@ pattern_number,title,description,context,solution
                                         
                                         <!-- Creator Info -->
                                         <div style="margin-bottom: 12px;">
-                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">作成者情報（任意）</label>
+                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">作成者情報（任意） *カード右下に表示</label>
                                             <input type="text" id="batchCreatorInfo" placeholder="例：田中太郎" 
                                                    style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; width: 200px;"
                                                    oninput="syncBatchToMainFields()">
@@ -3145,7 +3145,7 @@ pattern_number,title,description,context,solution
                                         
                                         <!-- Creator Icon -->
                                         <div>
-                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">作成者アイコン（任意）</label>
+                                            <label style="display: block; margin-bottom: 4px; font-size: 13px; color: #555;">作成者アイコン（任意） *カード右下に表示</label>
                                             <input type="file" id="batchCreatorIcon" accept="image/*" 
                                                    style="padding: 4px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; width: 200px;"
                                                    onchange="handleBatchCreatorIconUpload(event)">
