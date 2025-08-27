@@ -2568,6 +2568,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="seriesName">シリーズ名</label>
+                    <input type="text" id="seriesName" placeholder="シリーズ名を入力（任意）" oninput="updateCard()">
+                </div>
+
+                <div class="form-group">
                     <label for="patternTitle">パターン名</label>
                     <input type="text" id="patternTitle" placeholder="パターン名を入力" oninput="updateCard()">
                 </div>
@@ -2585,6 +2590,19 @@
                 <div class="form-group">
                     <label for="patternSolution">工夫・トライアル</label>
                     <textarea id="patternSolution" placeholder="課題に対する工夫や試してみたいことを記述..." oninput="updateCard()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="creatorInfo">作成者情報</label>
+                    <input type="text" id="creatorInfo" placeholder="作成者名を入力（任意）" oninput="updateCard()">
+                </div>
+
+                <div class="form-group">
+                    <label for="creatorIcon">作成者アイコン</label>
+                    <input type="file" id="creatorIcon" accept="image/*" onchange="handleCreatorIconUpload(event)">
+                    <small class="form-text">
+                        JPEGまたはPNG形式の画像ファイルをアップロードしてください（任意）
+                    </small>
                 </div>
 
                 <!-- カード操作ボタン -->
@@ -3150,6 +3168,8 @@ pattern_number,title,description,context,solution
                         
                     </div>
 
+
+
                     <div id="preset-batch-section" class="preset-batch-header" onclick="togglePresetBatch()" style="cursor: pointer; margin-bottom: 20px; padding: 15px; background: #f8f9ff; border: 2px solid #e1e8ed; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
                         <h2 style="margin: 0; color: #444;">📦 パターンカード（プリセット）一括生成</h2>
                         <span id="presetBatchToggle" style="font-size: 20px; color: #666; transition: transform 0.3s ease;">▼</span>
@@ -3205,6 +3225,7 @@ pattern_number,title,description,context,solution
         let currentTemplate = 'academic';
         let selectedPatterns = new Set();
         let customBackgroundImage = null;
+        let creatorIconImage = null;
         let csvData = []; // CSV読み込みデータ
         let currentFont = 'hiragino'; // 選択中のフォント
         
@@ -3765,6 +3786,31 @@ pattern_number,title,description,context,solution
             reader.readAsDataURL(file);
         }
         
+        // 作成者アイコンアップロード処理
+        function handleCreatorIconUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                fabric.Image.fromURL(e.target.result, function(img) {
+                    // 高解像度画像処理設定
+                    img.set({
+                        crossOrigin: 'anonymous'
+                    });
+                    
+                    // 画像補間方式を高品質に設定
+                    if (img.getElement()) {
+                        img.getElement().style.imageRendering = 'high-quality';
+                    }
+                    
+                    creatorIconImage = img;
+                    updateCard();
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+        
         // パターンデータ読み込み
         function loadPatternData() {
             const select = document.getElementById('patternSelect');
@@ -3792,6 +3838,8 @@ pattern_number,title,description,context,solution
                 const description = document.getElementById('patternDescription').value || '';
                 const context = document.getElementById('patternContext').value || '';
                 const solution = document.getElementById('patternSolution').value || '';
+                const seriesName = document.getElementById('seriesName').value || '';
+                const creatorInfo = document.getElementById('creatorInfo').value || '';
                 // CSV処理時はoverride値を優先、通常時はUI値を使用
                 const patternNumber = overridePatternNumber || document.getElementById('patternSelect').value || '';
                 
@@ -3872,6 +3920,38 @@ pattern_number,title,description,context,solution
                 });
             }
             canvas.add(background);
+            
+            // シリーズ名（左上）- 任意フィールド
+            if (seriesName) {
+                // シリーズ名テキストを作成して実際のサイズを測定
+                const seriesText = new fabric.Text(seriesName, {
+                    left: 45 * scaleFactor,
+                    top: 15 * scaleFactor,
+                    fontSize: 12 * scaleFactor,
+                    fill: '#666666',
+                    fontFamily: getCurrentFontFamily(),
+                    fontWeight: 'normal',
+                    selectable: false
+                });
+                
+                // テキストサイズを取得（スケールファクター適用済み）
+                const seriesTextWidth = seriesText.width;
+                const seriesTextHeight = seriesText.height;
+                
+                // 背景を作成（実測サイズに基づく）
+                const seriesBg = new fabric.Rect({
+                    left: (45 - 4) * scaleFactor,
+                    top: (15 - 2) * scaleFactor,
+                    width: seriesTextWidth + (8 * scaleFactor),
+                    height: seriesTextHeight + (4 * scaleFactor),
+                    fill: 'rgba(255, 255, 255, 0.85)',
+                    rx: 4 * scaleFactor,
+                    ry: 4 * scaleFactor,
+                    selectable: false
+                });
+                canvas.add(seriesBg);
+                canvas.add(seriesText);
+            }
             
             // パターン番号（左上）- スケール調整対応
             if (patternNumber) {
@@ -3966,7 +4046,7 @@ pattern_number,title,description,context,solution
                 left: 45 * scaleFactor,
                 top: 120 * scaleFactor,
                 width: contentWidth,
-                height: 435 * scaleFactor,
+                height: 415 * scaleFactor,
                 fill: contentGradient,
                 rx: 18 * scaleFactor,
                 ry: 18 * scaleFactor,
@@ -4052,6 +4132,73 @@ pattern_number,title,description,context,solution
                     selectable: false
                 });
                 canvas.add(solutionText);
+            }
+            
+            // 作成者情報とアイコンの要素を先に作成してサイズ測定（分離配置）
+            let creatorText = null;
+            let creatorTextWidth = 0;
+            
+            if (creatorInfo) {
+                creatorText = new fabric.Text(creatorInfo, {
+                    left: (creatorIconImage ? 805 : 843) * scaleFactor, // アイコンがある場合はさらに左に移動（余白拡大）
+                    top: (baseHeight - 42) * scaleFactor, // 少し上に調整
+                    fontSize: 12 * scaleFactor,
+                    fill: '#888888',
+                    fontFamily: getCurrentFontFamily(),
+                    fontWeight: 'normal',
+                    textAlign: 'right',
+                    originX: 'right',
+                    selectable: false
+                });
+                creatorTextWidth = creatorText.width;
+            }
+            
+            // 作成者情報の背景（独立）
+            if (creatorInfo) {
+                const creatorInfoBg = new fabric.Rect({
+                    left: (creatorIconImage ? 805 : 843) * scaleFactor - creatorTextWidth - (4 * scaleFactor),
+                    top: (baseHeight - 46) * scaleFactor,
+                    width: creatorTextWidth + (8 * scaleFactor),
+                    height: 16 * scaleFactor, // テキストに適したサイズ
+                    fill: 'rgba(255, 255, 255, 0.85)',
+                    rx: 4 * scaleFactor,
+                    ry: 4 * scaleFactor,
+                    selectable: false
+                });
+                canvas.add(creatorInfoBg);
+            }
+            
+            // 作成者アイコンの背景（独立）
+            if (creatorIconImage) {
+                const iconBg = new fabric.Rect({
+                    left: (843 - 25 - 4) * scaleFactor,
+                    top: (baseHeight - 54) * scaleFactor,
+                    width: (25 + 8) * scaleFactor,
+                    height: (25 + 8) * scaleFactor, // アイコンサイズに適したサイズ
+                    fill: 'rgba(255, 255, 255, 0.85)',
+                    rx: 4 * scaleFactor,
+                    ry: 4 * scaleFactor,
+                    selectable: false
+                });
+                canvas.add(iconBg);
+            }
+            
+            // 作成者情報（右下左側）- 事前に作成済みのオブジェクトを追加
+            if (creatorText) {
+                canvas.add(creatorText);
+            }
+            
+            // 作成者アイコン（右下右側）- 背景と合わせて配置
+            if (creatorIconImage) {
+                const iconClone = fabric.util.object.clone(creatorIconImage);
+                iconClone.set({
+                    left: (843 - 25) * scaleFactor, // 右端から25px（アイコンサイズ）分左に配置
+                    top: (baseHeight - 50) * scaleFactor, // 背景に合わせて調整
+                    scaleX: (25 / iconClone.width) * scaleFactor,
+                    scaleY: (25 / iconClone.height) * scaleFactor,
+                    selectable: false
+                });
+                canvas.add(iconClone);
             }
             
             canvas.renderAll();
@@ -4500,8 +4647,12 @@ pattern_number,title,description,context,solution
             document.getElementById('patternDescription').value = '';
             document.getElementById('patternContext').value = '';
             document.getElementById('patternSolution').value = '';
+            document.getElementById('seriesName').value = '';
+            document.getElementById('creatorInfo').value = '';
+            document.getElementById('creatorIcon').value = '';
             document.getElementById('fontSelect').value = 'hiragino'; // フォントもリセット
             currentFont = 'hiragino';
+            creatorIconImage = null; // 作成者アイコンもクリア
             clearSelection();
             clearCSVData(); // CSVデータもクリア（編集セクションも非表示になる）
             updateCard();
