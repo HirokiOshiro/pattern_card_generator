@@ -3685,7 +3685,9 @@ pattern_number,title,description,context,solution
                     scaleY: height / background.height,
                     selectable: false,
                     // スケール時の品質保持
-                    strokeWidth: 0
+                    strokeWidth: 0,
+                    // カスタム背景識別フラグ
+                    isCustomBackground: true
                 });
             } else {
                 // グラデーション背景
@@ -3897,7 +3899,7 @@ pattern_number,title,description,context,solution
     }
         
         // 高解像度でエクスポートするためのヘルパー関数
-        function exportCanvasAtHighResolution(targetCanvas, multiplier = 2) {
+        async function exportCanvasAtHighResolution(targetCanvas, multiplier = 2) {
             const currentWidth = targetCanvas.getWidth();
             const currentHeight = targetCanvas.getHeight();
             
@@ -3918,23 +3920,63 @@ pattern_number,title,description,context,solution
             tempCanvas.contextContainer.imageSmoothingEnabled = true;
             tempCanvas.contextContainer.imageSmoothingQuality = 'high';
             
-            // オブジェクトを高解像度でコピー
-            targetCanvas.getObjects().forEach(obj => {
-                obj.clone((clonedObj) => {
-                    // 高解像度用にスケールを調整
-                    const originalScale = obj.originalScale || 1;
-                    const finalScale = originalScale * scale * multiplier;
-                    
-                    clonedObj.set({
-                        scaleX: finalScale,
-                        scaleY: finalScale,
-                        left: (obj.originalLeft || obj.left) * scale * multiplier,
-                        top: (obj.originalTop || obj.top) * scale * multiplier
+            // オブジェクトを高解像度でコピー（Promise化）
+            // カスタム背景を最優先で処理するためにソート
+            const objects = targetCanvas.getObjects();
+            const sortedObjects = objects.sort((a, b) => {
+                // カスタム背景を最初に処理
+                if (a.isCustomBackground && !b.isCustomBackground) return -1;
+                if (!a.isCustomBackground && b.isCustomBackground) return 1;
+                return 0;
+            });
+            
+            const clonePromises = sortedObjects.map(obj => {
+                return new Promise((resolve) => {
+                    obj.clone((clonedObj) => {
+                        // 高解像度用にスケールを調整
+                        const originalScale = obj.originalScale || 1;
+                        const finalScale = originalScale * scale * multiplier;
+                        
+                        clonedObj.set({
+                            scaleX: finalScale,
+                            scaleY: finalScale,
+                            left: (obj.originalLeft || obj.left) * scale * multiplier,
+                            top: (obj.originalTop || obj.top) * scale * multiplier,
+                            // カスタム背景フラグを継承
+                            isCustomBackground: obj.isCustomBackground || false
+                        });
+                        
+                        resolve(clonedObj);
                     });
-                    
-                    tempCanvas.add(clonedObj);
                 });
             });
+            
+            // 全てのクローンが完了するまで待機
+            const clonedObjects = await Promise.all(clonePromises);
+            
+            // クローンされたオブジェクトを順次追加
+            clonedObjects.forEach(obj => {
+                tempCanvas.add(obj);
+            });
+            
+            // カスタム背景のフォールバック処理
+            if (currentTemplate === 'custom' && customBackgroundImage) {
+                const hasCustomBackground = clonedObjects.some(obj => obj.isCustomBackground);
+                if (!hasCustomBackground) {
+                    console.warn('カスタム背景が見つからないため、フォールバック処理を実行');
+                    // 元のカスタム背景を直接クローンして追加
+                    const fallbackBg = fabric.util.object.clone(customBackgroundImage);
+                    fallbackBg.set({
+                        left: 0,
+                        top: 0,
+                        scaleX: (exportWidth * multiplier) / fallbackBg.width,
+                        scaleY: (exportHeight * multiplier) / fallbackBg.height,
+                        selectable: false,
+                        isCustomBackground: true
+                    });
+                    tempCanvas.insertAt(fallbackBg, 0); // 最背面に配置
+                }
+            }
             
             tempCanvas.renderAll();
             
@@ -3948,7 +3990,7 @@ pattern_number,title,description,context,solution
         }
         
         // 現在のカードをエクスポート（高解像度対応）
-        function exportCurrentCard() {
+        async function exportCurrentCard() {
             if (!canvas) {
                 alert('カードが生成されていません。');
                 return;
@@ -3961,7 +4003,7 @@ pattern_number,title,description,context,solution
                 link.download = `${safeTitle}.png`;
                 
                 // 高解像度でエクスポート（2倍解像度）
-                link.href = exportCanvasAtHighResolution(canvas, 2.0);
+                link.href = await exportCanvasAtHighResolution(canvas, 2.0);
                 
                 document.body.appendChild(link);
                 link.click();
@@ -4094,7 +4136,7 @@ pattern_number,title,description,context,solution
                         const link = document.createElement('a');
                         const filename = `learning_patterns_${patternId}`;
                         link.download = `${filename}.png`;
-                        link.href = exportCanvasAtHighResolution(canvas, 2.0);
+                        link.href = await exportCanvasAtHighResolution(canvas, 2.0);
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
@@ -4158,7 +4200,7 @@ pattern_number,title,description,context,solution
                     
                     // 画像データをZIPに追加（高解像度対応）
                     try {
-                        const dataURL = exportCanvasAtHighResolution(canvas, 2.0);
+                        const dataURL = await exportCanvasAtHighResolution(canvas, 2.0);
                         const base64Data = dataURL.split(',')[1]; // data:image/png;base64, を除去
                         
                         // ファイル名：learning_patterns_{番号}.png
@@ -4575,7 +4617,7 @@ pattern_number,title,description,context,solution
                         // 新しいファイル命名規則：{グループ名}_{カード番号}.png
                         const filename = `${safeGroupName}_${cardNumber}`;
                         link.download = `${filename}.png`;
-                        link.href = exportCanvasAtHighResolution(canvas, 1.0);
+                        link.href = await exportCanvasAtHighResolution(canvas, 1.0);
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
@@ -4643,7 +4685,7 @@ pattern_number,title,description,context,solution
                     
                     // 画像データをZIPに追加
                     try {
-                        const dataURL = exportCanvasAtHighResolution(canvas, 1.0);
+                        const dataURL = await exportCanvasAtHighResolution(canvas, 1.0);
                         const base64Data = dataURL.split(',')[1]; // data:image/png;base64, を除去
                         
                         // カード番号の決定（CSV番号がある場合はそれを使用、なければ連番）
