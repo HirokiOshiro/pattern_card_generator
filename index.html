@@ -1859,6 +1859,167 @@
             overflow: hidden;
         }
         
+        /* CSV統合ガイド */
+        .beginner-guide.csv-integrated {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 1px solid #adb5bd;
+            margin-bottom: 25px;
+        }
+        
+        .csv-guide-steps {
+            display: grid;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .step-card {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #ff9a5a;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .step-header h5 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 16px;
+        }
+        
+        .step-content ul {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        
+        .step-content li {
+            margin: 4px 0;
+        }
+        
+        .step-content code {
+            background: #f7f7f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .other-methods {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e8ed;
+        }
+        
+        .method-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .method-link-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid #d1d9e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .method-link-btn:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+        
+        .csv-template-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e8ed;
+        }
+        
+        .template-options {
+            display: grid;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .template-option {
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: left;
+        }
+        
+        .template-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            justify-content: flex-start;
+        }
+        
+        .template-icon {
+            font-size: 16px;
+        }
+        
+        .csv-template-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: #ff9a5a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 8px 0 6px 0;
+        }
+        
+        .csv-template-btn:hover {
+            background: #ff8542;
+            transform: translateY(-1px);
+        }
+        
+        .csv-template-btn.secondary {
+            background: #667eea;
+        }
+        
+        .csv-template-btn.secondary:hover {
+            background: #5a6fd8;
+        }
+        
+        .template-option small {
+            display: block;
+            color: #666;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        
         .guide-toggle {
             padding: 15px 20px;
             cursor: pointer;
@@ -2030,20 +2191,20 @@
             font-size: 16px;
         }
         
-        .tips-grid {
-            display: grid;
-            gap: 12px;
+        .tips-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
         }
         
-        .tip-item {
-            display: flex;
-            gap: 10px;
+        .tips-list li {
+            margin: 8px 0;
+            padding: 0;
         }
         
-        .tip-item strong {
+        .tips-list li strong {
             color: #667eea;
-            min-width: 120px;
-            font-size: 13px;
+            font-weight: 600;
         }
         
         .tip-item p {
@@ -2068,18 +2229,6 @@
                 gap: 12px;
             }
             
-            .tips-grid {
-                gap: 10px;
-            }
-            
-            .tip-item {
-                flex-direction: column;
-                gap: 5px;
-            }
-            
-            .tip-item strong {
-                min-width: auto;
-            }
         }
         
         /* ヘルプアクセスエリア */
@@ -2451,13 +2600,6 @@
 
             <!-- メインエリア -->
             <div class="main-area">
-                <!-- ヘルプアクセス -->
-                <div class="help-access-area">
-                    <button class="help-access-btn" onclick="showCSVHelp()" title="使い方ヘルプを表示">
-                        <span class="help-icon">❓</span>
-                        <span class="help-text">使い方ガイド</span>
-                    </button>
-                </div>
                 
                 <!-- プレビューセクション -->
                 <div class="preview-section">
@@ -2494,104 +2636,6 @@
                         </div>
                     </div>
                     
-                    <!-- 初心者向け詳細ガイド（開閉式） -->
-                    <div class="beginner-guide">
-                        <div class="guide-toggle" onclick="toggleBeginnerGuide()">
-                            <div class="guide-toggle-content">
-                                <span class="guide-icon">📖</span>
-                                <span class="guide-title">初めて使う方はこちら - 使い方ガイド</span>
-                                <small class="guide-subtitle">パターンカード作成の詳しい手順を説明します</small>
-                            </div>
-                            <span class="guide-arrow" id="guideToggleArrow">▼</span>
-                        </div>
-                        
-                        <div class="guide-content" id="beginnerGuideContent" style="display: none;">
-                            <div class="guide-intro">
-                                <h4>🎯 3つの作成方法から選択してください</h4>
-                                <p>あなたの状況に応じて最適な方法を選んでください。初回の方には<strong>AI生成</strong>がおすすめです。</p>
-                            </div>
-                            
-                            <div class="guide-methods">
-                                <div class="method-card" onclick="scrollToSection('csv-section')">
-                                    <div class="method-header">
-                                        <span class="method-icon">📁</span>
-                                        <h5>方法1：既存CSVファイル</h5>
-                                        <span class="method-badge fastest">最速</span>
-                                    </div>
-                                    <div class="method-description">
-                                        <p><strong>適用場面：</strong>CSVファイルを既にお持ちの場合</p>
-                                        <ul>
-                                            <li>Excel等で作成したCSVファイル</li>
-                                            <li>他のAIツールで生成したCSVデータ</li>
-                                            <li>過去に作成したパターンデータ</li>
-                                        </ul>
-                                        <p><strong>所要時間：</strong>約1-2分</p>
-                                    </div>
-                                    <div class="method-action">
-                                        <span class="action-text">→ CSVファイル読み込みセクションへ</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="method-card" onclick="openAIGuideSection()">
-                                    <div class="method-header">
-                                        <span class="method-icon">🤖</span>
-                                        <h5>方法2：AI自動生成</h5>
-                                        <span class="method-badge recommended">推奨</span>
-                                    </div>
-                                    <div class="method-description">
-                                        <p><strong>適用場面：</strong>書籍やテーマからパターンを作成したい場合</p>
-                                        <ul>
-                                            <li>書籍名を指定してパターン抽出</li>
-                                            <li>学習テーマから自動生成</li>
-                                            <li>資料やウェブサイトから生成</li>
-                                        </ul>
-                                        <p><strong>所要時間：</strong>約3-5分</p>
-                                    </div>
-                                    <div class="method-action">
-                                        <span class="action-text">→ AI生成ガイドセクションへ</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="method-card" onclick="scrollToSection('preset-batch-section')">
-                                    <div class="method-header">
-                                        <span class="method-icon">📦</span>
-                                        <h5>方法3：プリセット選択</h5>
-                                        <span class="method-badge">確実</span>
-                                    </div>
-                                    <div class="method-description">
-                                        <p><strong>適用場面：</strong>井庭崇先生の既存パターンから選択</p>
-                                        <ul>
-                                            <li>40個の学習パターンから選択</li>
-                                            <li>実証済みの効果的なパターン</li>
-                                            <li>個別または一括で生成可能</li>
-                                        </ul>
-                                        <p><strong>所要時間：</strong>約2-3分</p>
-                                    </div>
-                                    <div class="method-action">
-                                        <span class="action-text">→ プリセット一括生成セクションへ</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="guide-tips">
-                                <h4>💡 使い方のコツ</h4>
-                                <div class="tips-grid">
-                                    <div class="tip-item">
-                                        <strong>🎨 デザイン統一：</strong>
-                                        <p>すべての方法で同じデザインテンプレートが適用されます</p>
-                                    </div>
-                                    <div class="tip-item">
-                                        <strong>📱 高画質出力：</strong>
-                                        <p>印刷にも対応した高解像度でカードを生成できます</p>
-                                    </div>
-                                    <div class="tip-item">
-                                        <strong>📁 一括処理：</strong>
-                                        <p>複数枚のカードを一度に生成・ダウンロードが可能です</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- 一括生成セクション -->
@@ -2788,6 +2832,139 @@ pattern_number,title,description,context,solution
                             </div>
                         </div>
                         
+                        <!-- CSV使い方ガイド（開閉式） -->
+                        <div class="beginner-guide csv-integrated">
+                            <div class="guide-toggle" onclick="toggleCSVGuide()">
+                                <div class="guide-toggle-content">
+                                    <span class="guide-icon">📖</span>
+                                    <span class="guide-title">CSVファイル使用ガイド</span>
+                                    <small class="guide-subtitle">CSVファイルの準備から生成まで詳しく説明</small>
+                                </div>
+                                <span class="guide-arrow" id="csvGuideArrow">▼</span>
+                            </div>
+                            
+                            <div class="guide-content" id="csvGuideContent" style="display: none;">
+                                <div class="guide-intro">
+                                    <h4>🎯 CSVファイルを使った最速カード生成</h4>
+                                    <p>CSVファイルがあれば1-2分で複数のパターンカードを一括生成できます。</p>
+                                </div>
+                                
+                                <div class="csv-guide-steps">
+                                    <div class="step-card">
+                                        <div class="step-header">
+                                            <span class="step-number">1</span>
+                                            <h5>CSVファイルを準備</h5>
+                                        </div>
+                                        <div class="step-content">
+                                            <p><strong>必要な列：</strong></p>
+                                            <ul>
+                                                <li><code>title</code> - パターンのタイトル</li>
+                                                <li><code>description</code> - パターンの説明</li>
+                                                <li><code>context</code> - 使用する場面</li>
+                                                <li><code>solution</code> - 解決策・工夫</li>
+                                            </ul>
+                                            <p><strong>オプション列：</strong></p>
+                                            <ul>
+                                                <li><code>pattern_number</code> - カード番号</li>
+                                                <li><code>template</code> - デザインテンプレート</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="step-card">
+                                        <div class="step-header">
+                                            <span class="step-number">2</span>
+                                            <h5>ファイルを読み込み</h5>
+                                        </div>
+                                        <div class="step-content">
+                                            <p><strong>読み込み方法：</strong></p>
+                                            <ul>
+                                                <li>下のドラッグ&ドロップエリアにファイルをドロップ</li>
+                                                <li>または「ファイル選択」ボタンをクリック</li>
+                                            </ul>
+                                            <p><strong>対応形式：</strong>CSV (.csv), UTF-8エンコーディング推奨</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="step-card">
+                                        <div class="step-header">
+                                            <span class="step-number">3</span>
+                                            <h5>データ確認・生成</h5>
+                                        </div>
+                                        <div class="step-content">
+                                            <p><strong>データ確認：</strong></p>
+                                            <ul>
+                                                <li>読み込み後にプレビュー表示</li>
+                                                <li>必要に応じて内容を編集可能</li>
+                                            </ul>
+                                            <p><strong>生成オプション：</strong></p>
+                                            <ul>
+                                                <li>個別ダウンロード - 1枚ずつ保存</li>
+                                                <li>ZIP一括ダウンロード - 全て一度に保存</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="csv-tips">
+                                    <h4>💡 CSVファイル作成のコツ</h4>
+                                    <ul class="tips-list">
+                                        <li>
+                                            <strong>🔧 作成方法：</strong>Excel, Googleスプレッドシート、ChatGPT等のAIツールで作成可能
+                                        </li>
+                                        <li>
+                                            <strong>📝 文字数目安：</strong>タイトル：20文字以内、説明・場面・工夫：各150文字程度
+                                        </li>
+                                        <li>
+                                            <strong>⚠️ 注意事項：</strong>カンマを含む文字は""で囲む、改行は含まない
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="csv-template-section">
+                                    <h4>🛠️ CSVファイルをお持ちでない方へ</h4>
+                                    <div class="template-options">
+                                        <div class="template-option">
+                                            <div class="template-header">
+                                                <span class="template-icon">📋</span>
+                                                <strong>サンプルテンプレート取得</strong>
+                                            </div>
+                                            <p>正しい形式のCSVテンプレートファイルをダウンロードできます。</p>
+                                            <button class="csv-template-btn" onclick="downloadCSVTemplate()">
+                                                📋 サンプルCSV取得
+                                            </button>
+                                            <small>形式に沿ったテンプレートファイルをダウンロードしてExcel等で編集</small>
+                                        </div>
+                                        
+                                        <div class="template-option">
+                                            <div class="template-header">
+                                                <span class="template-icon">🤖</span>
+                                                <strong>AI自動生成を利用</strong>
+                                            </div>
+                                            <p>書籍やテーマを指定してパターンカードのCSVデータを自動生成できます。</p>
+                                            <button class="csv-template-btn secondary" onclick="openAIGuideSection()">
+                                                🤖 AI生成セクションへ
+                                            </button>
+                                            <small>ChatGPT等のAIにプロンプトを入力してCSVファイルを生成</small>
+                                        </div>
+                                        
+                                        <div class="template-option">
+                                            <div class="template-header">
+                                                <span class="template-icon">📦</span>
+                                                <strong>プリセット利用</strong>
+                                            </div>
+                                            <p>井庭崇先生の既存40パターンから選択して即座にカード生成できます。</p>
+                                            <button class="csv-template-btn secondary" onclick="scrollToSection('preset-batch-section')">
+                                                📦 プリセット選択へ
+                                            </button>
+                                            <small>実証済みのパターンから選択、CSV作成不要</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
                         <div class="info-panel enhanced">
                             <div class="info-grid">
                                 <div class="info-item">
@@ -2845,22 +3022,7 @@ pattern_number,title,description,context,solution
                             </div>
                         </div>
 
-                        <!-- CSV準備ツール -->
-                        <div class="csv-tools-section">
-                            <div class="csv-tools-header">
-                                <span class="tools-icon">🛠️</span>
-                                <span class="tools-text">CSVファイルをお持ちでない方</span>
-                            </div>
-                            <div class="csv-tools-content">
-                                <input type="file" id="csvFileInput" accept=".csv,.txt" style="display: none;" onchange="handleCSVUpload(event)">
-                                <button class="btn btn-secondary" onclick="downloadCSVTemplate()" title="サンプルCSVファイルをダウンロード" style="font-size: 12px; padding: 8px 12px;">
-                                    📋 サンプルCSV取得
-                                </button>
-                                <small style="color: #666; font-size: 11px; margin-left: 10px;">
-                                    形式に沿ったテンプレートファイルをダウンロードできます
-                                </small>
-                            </div>
-                        </div>
+                        <input type="file" id="csvFileInput" accept=".csv,.txt" style="display: none;" onchange="handleCSVUpload(event)">
                         
                         <!-- データプレビューセクション -->
                         <div id="csvPreview" style="display: none;">
@@ -2995,7 +3157,7 @@ pattern_number,title,description,context,solution
                         <div class="divider-line"></div>
                     </div>
 
-                    <div class="preset-batch-header" onclick="togglePresetBatch()" style="cursor: pointer; margin-bottom: 20px; padding: 15px; background: #f8f9ff; border: 2px solid #e1e8ed; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
+                    <div id="preset-batch-section" class="preset-batch-header" onclick="togglePresetBatch()" style="cursor: pointer; margin-bottom: 20px; padding: 15px; background: #f8f9ff; border: 2px solid #e1e8ed; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
                         <h2 style="margin: 0; color: #444;">📦 パターンカード（プリセット）一括生成</h2>
                         <span id="presetBatchToggle" style="font-size: 20px; color: #666; transition: transform 0.3s ease;">▼</span>
                     </div>
@@ -3687,7 +3849,14 @@ pattern_number,title,description,context,solution
                     // スケール時の品質保持
                     strokeWidth: 0,
                     // カスタム背景識別フラグ
-                    isCustomBackground: true
+                    isCustomBackground: true,
+                    // 元のスケール情報を保存
+                    originalScale: 1,
+                    originalLeft: 0,
+                    originalTop: 0,
+                    // 元のサイズ情報を保存
+                    originalWidth: background.width,
+                    originalHeight: background.height
                 });
             } else {
                 // グラデーション背景
@@ -3937,14 +4106,29 @@ pattern_number,title,description,context,solution
                         const originalScale = obj.originalScale || 1;
                         const finalScale = originalScale * scale * multiplier;
                         
-                        clonedObj.set({
-                            scaleX: finalScale,
-                            scaleY: finalScale,
-                            left: (obj.originalLeft || obj.left) * scale * multiplier,
-                            top: (obj.originalTop || obj.top) * scale * multiplier,
-                            // カスタム背景フラグを継承
-                            isCustomBackground: obj.isCustomBackground || false
-                        });
+                        // カスタム背景の特別処理
+                        if (obj.isCustomBackground) {
+                            // カスタム背景は元のサイズから直接計算
+                            const targetScaleX = (exportWidth * multiplier) / obj.originalWidth;
+                            const targetScaleY = (exportHeight * multiplier) / obj.originalHeight;
+                            
+                            clonedObj.set({
+                                scaleX: targetScaleX,
+                                scaleY: targetScaleY,
+                                left: 0,
+                                top: 0,
+                                isCustomBackground: true
+                            });
+                        } else {
+                            // 通常のオブジェクト処理
+                            clonedObj.set({
+                                scaleX: finalScale,
+                                scaleY: finalScale,
+                                left: (obj.originalLeft || obj.left) * scale * multiplier,
+                                top: (obj.originalTop || obj.top) * scale * multiplier,
+                                isCustomBackground: false
+                            });
+                        }
                         
                         resolve(clonedObj);
                     });
@@ -3969,8 +4153,8 @@ pattern_number,title,description,context,solution
                     fallbackBg.set({
                         left: 0,
                         top: 0,
-                        scaleX: (exportWidth * multiplier) / fallbackBg.width,
-                        scaleY: (exportHeight * multiplier) / fallbackBg.height,
+                        scaleX: (exportWidth * multiplier) / customBackgroundImage.width,
+                        scaleY: (exportHeight * multiplier) / customBackgroundImage.height,
                         selectable: false,
                         isCustomBackground: true
                     });
@@ -4924,6 +5108,22 @@ pattern_number,title,description,context,solution
             }
         }
         
+        // CSVガイド開閉機能
+        function toggleCSVGuide() {
+            const content = document.getElementById('csvGuideContent');
+            const arrow = document.getElementById('csvGuideArrow');
+            
+            if (content.style.display === 'none' || content.style.display === '') {
+                content.style.display = 'block';
+                arrow.classList.add('expanded');
+                arrow.textContent = '▲';
+            } else {
+                content.style.display = 'none';
+                arrow.classList.remove('expanded');
+                arrow.textContent = '▼';
+            }
+        }
+        
         // AI活用ガイド関連の関数
         function toggleAIGuide() {
             const content = document.getElementById('aiGuideContent');
@@ -5226,8 +5426,27 @@ pattern_number,title,description,context,solution
 
         // セクション間ナビゲーション
         function scrollToSection(sectionId) {
-            const section = document.querySelector(`.${sectionId}`);
+            let section = document.querySelector(`.${sectionId}`);
+            
+            // IDでも検索を試す
+            if (!section) {
+                section = document.getElementById(sectionId);
+            }
+            
             if (section) {
+                // プリセットセクションの場合は自動展開
+                if (sectionId === 'preset-batch-section') {
+                    const content = document.getElementById('presetBatchContent');
+                    const toggle = document.getElementById('presetBatchToggle');
+                    if (content && content.style.display === 'none') {
+                        content.style.display = 'block';
+                        content.style.opacity = '1';
+                        content.style.maxHeight = 'none';
+                        toggle.textContent = '▲';
+                        toggle.style.transform = 'rotate(180deg)';
+                    }
+                }
+                
                 section.scrollIntoView({ 
                     behavior: 'smooth',
                     block: 'start'
