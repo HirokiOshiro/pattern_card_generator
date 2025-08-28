@@ -3867,9 +3867,9 @@ pattern_number,title,description,context,solution
                     }
                     
                     creatorIconImage = img;
-                    // 左側フィールドと同期
-                    const mainIconField = document.getElementById('creatorIcon');
-                    mainIconField.files = event.target.files;
+                    // 左側フィールドと同期：視覚的な同期のみ（FileListは読み取り専用のため）
+                    // 実際のファイルデータは creatorIconImage 変数で共有される
+                    syncBatchIconToMain(event);
                     updateCard();
                 });
             };
@@ -3891,9 +3891,28 @@ pattern_number,title,description,context,solution
         
         // 左側アイコンからバッチアイコンへの同期
         function syncMainIconToBatch(event) {
+            // 右側のバッチセクションにファイル名を表示して視覚的に同期
             const batchIconField = document.getElementById('batchCreatorIcon');
-            // FileListは読み取り専用なので、視覚的な同期のみ行う
-            // 実際のファイルデータは creatorIconImage 変数で共有される
+            const file = event.target.files[0];
+            if (file && batchIconField) {
+                // DataTransferを使用してファイルを同期
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                batchIconField.files = dt.files;
+            }
+        }
+        
+        // バッチアイコンから左側アイコンへの同期
+        function syncBatchIconToMain(event) {
+            // 左側のメインセクションにファイル名を表示して視覚的に同期
+            const mainIconField = document.getElementById('creatorIcon');
+            const file = event.target.files[0];
+            if (file && mainIconField) {
+                // DataTransferを使用してファイルを同期
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                mainIconField.files = dt.files;
+            }
         }
         
         // パターンデータ読み込み
@@ -4278,11 +4297,14 @@ pattern_number,title,description,context,solution
             if (creatorIconImage) {
                 const iconClone = fabric.util.object.clone(creatorIconImage);
                 iconClone.set({
-                    left: (843 - 25) * scaleFactor, // 右端から25px（アイコンサイズ）分左に配置
-                    top: (baseHeight - 50) * scaleFactor, // 背景に合わせて調整
+                    left: (843 - 25 - 4 + (25 + 8)/2) * scaleFactor, // 背景四角の中央に配置
+                    top: (baseHeight - 54 + (25 + 8)/2) * scaleFactor, // 背景四角の中央に配置
+                    originX: 'center', // 中央基準で配置
+                    originY: 'center', // 中央基準で配置
                     scaleX: (25 / iconClone.width) * scaleFactor,
                     scaleY: (25 / iconClone.height) * scaleFactor,
-                    selectable: false
+                    selectable: false,
+                    isCreatorIcon: true // 作成者アイコンであることを示すフラグ
                 });
                 canvas.add(iconClone);
             }
@@ -4325,7 +4347,12 @@ pattern_number,title,description,context,solution
                 return 0;
             });
             
-            const clonePromises = sortedObjects.map(obj => {
+            const clonePromises = sortedObjects
+                .filter(obj => {
+                    // 作成者アイコンを除外（isCreatorIconフラグで判定）
+                    return !obj.isCreatorIcon;
+                })
+                .map(obj => {
                 return new Promise((resolve) => {
                     obj.clone((clonedObj) => {
                         // 高解像度用にスケールを調整
@@ -4369,6 +4396,22 @@ pattern_number,title,description,context,solution
                 tempCanvas.add(obj);
             });
             
+            
+            // 作成者アイコンを正しいサイズで追加
+            if (creatorIconImage) {
+                const iconClone = fabric.util.object.clone(creatorIconImage);
+                iconClone.set({
+                    left: (843 - 25 - 4 + (25 + 8)/2) * (exportWidth * multiplier) / baseWidth, // 背景四角の中央に配置
+                    top: (baseHeight - 54 + (25 + 8)/2) * (exportHeight * multiplier) / baseHeight, // 背景四角の中央に配置
+                    originX: 'center', // 中央基準で配置
+                    originY: 'center', // 中央基準で配置
+                    scaleX: (25 / iconClone.width) * (exportWidth * multiplier) / baseWidth,
+                    scaleY: (25 / iconClone.height) * (exportHeight * multiplier) / baseHeight,
+                    selectable: false
+                });
+                tempCanvas.add(iconClone);
+            }
+
             // カスタム背景のフォールバック処理
             if (currentTemplate === 'custom' && customBackgroundImage) {
                 const hasCustomBackground = clonedObjects.some(obj => obj.isCustomBackground);
