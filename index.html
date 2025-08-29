@@ -3196,6 +3196,9 @@ pattern_number,title,description,context,solution
                                 <button class="btn btn-primary" onclick="generateCSVBatch()" id="generateCSVBtn" style="font-size: 14px; padding: 10px 20px;">
                                     🎨 CSVデータを一括生成
                                 </button>
+                                <button class="btn btn-secondary" onclick="previewCSVSlideshow()" id="csvSlideshowBtn" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; font-size: 14px; padding: 10px 20px; margin-left: 10px;">
+                                    🎬 CSVカードをスライドショーでプレビュー
+                                </button>
                             </div>
                         </div>
                             
@@ -3242,6 +3245,9 @@ pattern_number,title,description,context,solution
                         </button>
                         <button class="btn btn-primary" onclick="generateBatch()" id="generateBatchBtn">
                             🎨 選択したカードを一括生成
+                        </button>
+                        <button class="btn btn-secondary" onclick="previewSlideshowBatch()" id="slideshowPreviewBtn" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none;">
+                            🎬 スライドショーでプレビュー
                         </button>
                     </div>
                     
@@ -4029,8 +4035,8 @@ pattern_number,title,description,context,solution
             if (seriesName) {
                 // シリーズ名テキストを作成して実際のサイズを測定
                 const seriesText = new fabric.Text(seriesName, {
-                    left: 45 * scaleFactor,
-                    top: 15 * scaleFactor,
+                    left: (45 + 4) * scaleFactor,
+                    top: 20 * scaleFactor,
                     fontSize: 12 * scaleFactor,
                     fill: '#666666',
                     fontFamily: getCurrentFontFamily(),
@@ -4044,13 +4050,13 @@ pattern_number,title,description,context,solution
                 
                 // 背景を作成（実測サイズに基づく）
                 const seriesBg = new fabric.Rect({
-                    left: (45 - 4) * scaleFactor,
-                    top: (15 - 2) * scaleFactor,
+                    left: 45 * scaleFactor,
+                    top: (20 - 2) * scaleFactor,
                     width: seriesTextWidth + (8 * scaleFactor),
                     height: seriesTextHeight + (4 * scaleFactor),
-                    fill: 'rgba(255, 255, 255, 0.85)',
-                    rx: 4 * scaleFactor,
-                    ry: 4 * scaleFactor,
+                    fill: 'rgba(255, 255, 255, 0.8)',
+                    rx: 0,
+                    ry: 0,
                     selectable: false
                 });
                 canvas.add(seriesBg);
@@ -4265,9 +4271,9 @@ pattern_number,title,description,context,solution
                     top: (baseHeight - 46) * scaleFactor,
                     width: creatorTextWidth + (8 * scaleFactor),
                     height: 16 * scaleFactor, // テキストに適したサイズ
-                    fill: 'rgba(255, 255, 255, 0.85)',
-                    rx: 4 * scaleFactor,
-                    ry: 4 * scaleFactor,
+                    fill: 'rgba(255, 255, 255, 0.8)',
+                    rx: 0,
+                    ry: 0,
                     selectable: false
                 });
                 canvas.add(creatorInfoBg);
@@ -4280,9 +4286,9 @@ pattern_number,title,description,context,solution
                     top: (baseHeight - 54) * scaleFactor,
                     width: (25 + 8) * scaleFactor,
                     height: (25 + 8) * scaleFactor, // アイコンサイズに適したサイズ
-                    fill: 'rgba(255, 255, 255, 0.85)',
-                    rx: 4 * scaleFactor,
-                    ry: 4 * scaleFactor,
+                    fill: 'rgba(255, 255, 255, 0.8)',
+                    rx: 0,
+                    ry: 0,
                     selectable: false
                 });
                 canvas.add(iconBg);
@@ -4519,8 +4525,15 @@ pattern_number,title,description,context,solution
         // 一括生成ボタン更新
         function updateBatchButton() {
             const btn = document.getElementById('generateBatchBtn');
+            const slideshowBtn = document.getElementById('slideshowPreviewBtn');
+            
             btn.textContent = `🎨 選択したカードを一括生成 (${selectedPatterns.size})`;
             btn.disabled = selectedPatterns.size === 0;
+            
+            if (slideshowBtn) {
+                slideshowBtn.textContent = `🎬 スライドショーでプレビュー (${selectedPatterns.size})`;
+                slideshowBtn.disabled = selectedPatterns.size === 0;
+            }
         }
         
         // 一括生成
@@ -5788,6 +5801,7 @@ pattern_number,title,description,context,solution
                 if (csvData.length > 0) {
                     updateStepIndicator(4);
                     showSuccess(`✅ ${csvData.length}件のデータを正常に読み込みました`);
+                    updateCSVButtons();
                 }
             } catch (error) {
                 showError('ファイルの読み込みに失敗しました。', 'ファイル形式とデータ内容を確認してください。');
@@ -5814,6 +5828,269 @@ pattern_number,title,description,context,solution
                 closeModal();
             }
         };
+
+        // CSVカードのスライドショープレビュー機能
+        async function previewCSVSlideshow() {
+            if (csvData.length === 0) {
+                alert('CSVデータが読み込まれていません。');
+                return;
+            }
+
+            // プレビュー用にカードデータを生成
+            const cardsData = [];
+            
+            for (let index = 0; index < csvData.length; index++) {
+                const row = csvData[index];
+                
+                // CSVデータをフォームに適用
+                document.getElementById('patternTitle').value = row.title || '';
+                document.getElementById('patternDescription').value = row.description || '';
+                document.getElementById('patternContext').value = row.context || '';
+                document.getElementById('patternSolution').value = row.solution || '';
+                
+                // パターン番号があれば設定
+                if (row.pattern_number) {
+                    document.getElementById('patternSelect').value = row.pattern_number;
+                }
+                
+                // カード生成
+                updateCard();
+                
+                // レンダリング完了を待つ
+                await new Promise(resolve => setTimeout(resolve, 150));
+                
+                const canvas = document.getElementById('cardCanvas');
+                const imageUrl = canvas.toDataURL('image/png');
+                const cardNumber = row.pattern_number || (index + 1);
+                
+                cardsData.push({
+                    imageUrl: imageUrl,
+                    title: row.title || `カード ${cardNumber}`,
+                    patternId: cardNumber
+                });
+            }
+
+            openCardSlideshow(cardsData);
+        }
+
+        // プリセットカードのスライドショープレビュー機能
+        async function previewSlideshowBatch() {
+            if (selectedPatterns.size === 0) {
+                alert('プレビューするパターンを選択してください。');
+                return;
+            }
+
+            // プレビュー用にカードデータを生成
+            const cardsData = [];
+            const sortedPatterns = Array.from(selectedPatterns).sort((a, b) => a - b);
+            
+            for (const patternId of sortedPatterns) {
+                // パターンデータを適用
+                if (patternData[patternId]) {
+                    const data = patternData[patternId];
+                    document.getElementById('patternTitle').value = data.title;
+                    document.getElementById('patternDescription').value = data.description;
+                    document.getElementById('patternContext').value = data.context;
+                    document.getElementById('patternSolution').value = data.solution;
+                    document.getElementById('patternSelect').value = patternId;
+                }
+                
+                // カード生成
+                updateCard();
+                
+                // レンダリング完了を待つ
+                await new Promise(resolve => setTimeout(resolve, 150));
+                
+                const canvas = document.getElementById('cardCanvas');
+                const imageUrl = canvas.toDataURL('image/png');
+                const patternTitle = patternData[patternId] ? patternData[patternId].title : `パターン ${patternId}`;
+                
+                cardsData.push({
+                    imageUrl: imageUrl,
+                    title: patternTitle,
+                    patternId: patternId
+                });
+            }
+
+            openCardSlideshow(cardsData);
+        }
+
+        // CSVボタンの状態更新
+        function updateCSVButtons() {
+            const csvBtn = document.getElementById('generateCSVBtn');
+            const csvSlideshowBtn = document.getElementById('csvSlideshowBtn');
+            
+            if (csvBtn && csvData.length > 0) {
+                csvBtn.textContent = `🎨 CSVデータを一括生成 (${csvData.length}件)`;
+                csvBtn.disabled = false;
+            }
+            
+            if (csvSlideshowBtn && csvData.length > 0) {
+                csvSlideshowBtn.textContent = `🎬 CSVカードをスライドショーでプレビュー (${csvData.length}件)`;
+                csvSlideshowBtn.disabled = false;
+            } else if (csvSlideshowBtn) {
+                csvSlideshowBtn.disabled = true;
+            }
+        }
+
+        // スライドショー機能 - 段階的実装Phase 1
+        function openCardSlideshow(cardsData) {
+            if (cardsData.length === 0) {
+                alert('表示するカードがありません。');
+                return;
+            }
+            
+            // Phase 2: 本格スライドショー実装
+            const newWindow = window.open('', '_blank', 'width=1000,height=700');
+            
+            // 基本HTML構造を作成
+            newWindow.document.write('<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>パターンカード スライドショー</title></head><body></body></html>');
+            newWindow.document.close();
+            
+            // CSSスタイルを追加
+            const style = newWindow.document.createElement('style');
+            style.textContent = `
+                body { margin: 0; padding: 0; background: #f5f5f5; color: #333; font-family: Arial, sans-serif; overflow: hidden; }
+                .slideshow-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+                .header { position: fixed; top: 0; left: 0; right: 0; padding: 8px 20px; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid #eee; z-index: 100; }
+                .header h1 { margin: 0; font-size: 16px; text-align: center; color: #666; font-weight: normal; }
+                .card-display { display: flex; flex-direction: column; align-items: center; max-width: 95%; max-height: 85%; }
+                .card-image { max-width: 100%; max-height: 75vh; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+                .card-info { margin-top: 15px; text-align: center; }
+                .card-title { display: none; }
+                .card-counter { font-size: 18px; opacity: 0.7; color: #666; }
+                .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 100; }
+                .btn { padding: 12px 24px; border: none; border-radius: 25px; background: rgba(255,255,255,0.95); color: #333; font-size: 16px; cursor: pointer; border: 1px solid #ddd; position: relative; white-space: nowrap; }
+                .btn:hover { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+                .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+                .auto-play { background: #4CAF50; color: white; border: 1px solid #4CAF50; }
+                .auto-play.playing { background: #FF5722; border: 1px solid #FF5722; }
+                .btn-text { display: inline; }
+                .btn-icon { display: none; }
+                .tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 6px 10px; border-radius: 4px; font-size: 12px; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.3s; margin-bottom: 5px; }
+                .btn:hover .tooltip { opacity: 1; visibility: visible; }
+                @media (max-width: 600px) {
+                    .controls { gap: 10px; }
+                    .btn { padding: 10px 16px; font-size: 18px; }
+                    .btn-text { display: none; }
+                    .btn-icon { display: inline; }
+                }
+                @media (max-width: 400px) {
+                    .controls { gap: 8px; bottom: 20px; }
+                    .btn { padding: 8px 12px; font-size: 16px; }
+                }
+            `;
+            newWindow.document.head.appendChild(style);
+            
+            // HTMLコンテンツを追加
+            newWindow.document.body.innerHTML = `
+                <div class="slideshow-container">
+                    <div class="header"><h1>📚 パターンカード スライドショー</h1></div>
+                    <div class="card-display">
+                        <img id="cardImage" class="card-image" src="${cardsData[0].imageUrl}" alt="Pattern Card">
+                        <div class="card-info">
+                            <div id="cardCounter" class="card-counter">1 / ${cardsData.length}</div>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button id="prevBtn" class="btn">
+                            <span class="btn-text">← 前へ</span>
+                            <span class="btn-icon">←</span>
+                            <span class="tooltip">前のカード</span>
+                        </button>
+                        <button id="playBtn" class="btn auto-play">
+                            <span class="btn-text">▶ 再生</span>
+                            <span class="btn-icon">▶</span>
+                            <span class="tooltip">自動再生</span>
+                        </button>
+                        <button id="nextBtn" class="btn">
+                            <span class="btn-text">次へ →</span>
+                            <span class="btn-icon">→</span>
+                            <span class="tooltip">次のカード</span>
+                        </button>
+                        <button onclick="window.close()" class="btn">
+                            <span class="btn-text">✕ 閉じる</span>
+                            <span class="btn-icon">✕</span>
+                            <span class="tooltip">スライドショーを閉じる</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // スライドショー機能を追加
+            newWindow.cardsData = cardsData;
+            newWindow.currentIndex = 0;
+            newWindow.isPlaying = false;
+            newWindow.playInterval = null;
+            
+            newWindow.showCard = function(index) {
+                if (index >= 0 && index < this.cardsData.length) {
+                    this.currentIndex = index;
+                    const card = this.cardsData[index];
+                    this.document.getElementById('cardImage').src = card.imageUrl;
+                    this.document.getElementById('cardCounter').textContent = (index + 1) + ' / ' + this.cardsData.length;
+                    this.document.getElementById('prevBtn').disabled = index === 0;
+                    this.document.getElementById('nextBtn').disabled = index === this.cardsData.length - 1;
+                }
+            };
+            
+            newWindow.nextCard = function() {
+                if (this.currentIndex < this.cardsData.length - 1) {
+                    this.showCard(this.currentIndex + 1);
+                }
+            };
+            
+            newWindow.prevCard = function() {
+                if (this.currentIndex > 0) {
+                    this.showCard(this.currentIndex - 1);
+                }
+            };
+            
+            newWindow.toggleAutoPlay = function() {
+                const playBtn = this.document.getElementById('playBtn');
+                const btnText = playBtn.querySelector('.btn-text');
+                const btnIcon = playBtn.querySelector('.btn-icon');
+                const tooltip = playBtn.querySelector('.tooltip');
+                
+                if (this.isPlaying) {
+                    clearInterval(this.playInterval);
+                    btnText.textContent = '▶ 再生';
+                    btnIcon.textContent = '▶';
+                    tooltip.textContent = '自動再生';
+                    playBtn.classList.remove('playing');
+                    this.isPlaying = false;
+                } else {
+                    const self = this;
+                    this.playInterval = setInterval(function() {
+                        if (self.currentIndex < self.cardsData.length - 1) {
+                            self.nextCard();
+                        } else {
+                            self.showCard(0);
+                        }
+                    }, 3000);
+                    btnText.textContent = '⏸ 停止';
+                    btnIcon.textContent = '⏸';
+                    tooltip.textContent = '自動再生を停止';
+                    playBtn.classList.add('playing');
+                    this.isPlaying = true;
+                }
+            };
+            
+            // イベントリスナーを設定
+            newWindow.document.getElementById('prevBtn').onclick = function() { newWindow.prevCard(); };
+            newWindow.document.getElementById('nextBtn').onclick = function() { newWindow.nextCard(); };
+            newWindow.document.getElementById('playBtn').onclick = function() { newWindow.toggleAutoPlay(); };
+            
+            newWindow.document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft') newWindow.prevCard();
+                if (e.key === 'ArrowRight') newWindow.nextCard();
+                if (e.key === ' ') { e.preventDefault(); newWindow.toggleAutoPlay(); }
+                if (e.key === 'Escape') newWindow.close();
+            });
+            
+            newWindow.showCard(0);
+            newWindow.focus();
+        }
     </script>
 
     <!-- カスタムモーダル -->
