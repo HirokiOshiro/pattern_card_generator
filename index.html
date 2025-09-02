@@ -5836,11 +5836,40 @@ pattern_number,title,description,context,solution
                 return;
             }
 
+            // 高解像度生成の確認とプログレス表示
+            const confirmed = confirm(`📊 ${csvData.length}枚のカードを高解像度でスライドショー用に生成します。\n\n✨ 高画質設定：2倍解像度（${888*2}×${600*2}px）\n⏱️ 生成時間：約${Math.ceil(csvData.length * 0.3)}秒\n\nよろしいですか？`);
+            if (!confirmed) return;
+
+            // プログレス表示用の要素を作成
+            const progressDiv = document.createElement('div');
+            progressDiv.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 10000; text-align: center;
+                min-width: 300px; border: 2px solid #667eea;
+            `;
+            progressDiv.innerHTML = `
+                <div style="font-size: 16px; color: #333; margin-bottom: 10px;">🎬 高解像度スライドショー生成中...</div>
+                <div style="background: #f0f0f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div id="slideshowProgress" style="background: linear-gradient(45deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                </div>
+                <div id="slideshowProgressText" style="font-size: 12px; color: #666; margin-top: 8px;">0 / ${csvData.length} 枚完了</div>
+            `;
+            document.body.appendChild(progressDiv);
+
+            const progressBar = document.getElementById('slideshowProgress');
+            const progressText = document.getElementById('slideshowProgressText');
+
             // プレビュー用にカードデータを生成
             const cardsData = [];
             
             for (let index = 0; index < csvData.length; index++) {
                 const row = csvData[index];
+                
+                // プログレス更新
+                const progress = ((index + 1) / csvData.length) * 100;
+                progressBar.style.width = progress + '%';
+                progressText.textContent = `${index + 1} / ${csvData.length} 枚完了 - 高解像度生成中...`;
                 
                 // CSVデータをフォームに適用
                 document.getElementById('patternTitle').value = row.title || '';
@@ -5859,8 +5888,9 @@ pattern_number,title,description,context,solution
                 // レンダリング完了を待つ
                 await new Promise(resolve => setTimeout(resolve, 150));
                 
+                // 高解像度でカード画像を生成（スライドショー用）
                 const canvas = document.getElementById('cardCanvas');
-                const imageUrl = canvas.toDataURL('image/png');
+                const imageUrl = await exportCanvasAtHighResolution(canvas.fabric, 2);
                 const cardNumber = row.pattern_number || (index + 1);
                 
                 cardsData.push({
@@ -5868,7 +5898,13 @@ pattern_number,title,description,context,solution
                     title: row.title || `カード ${cardNumber}`,
                     patternId: cardNumber
                 });
+
+                // UI更新を待つ
+                await new Promise(resolve => setTimeout(resolve, 50));
             }
+
+            // プログレス表示を削除
+            document.body.removeChild(progressDiv);
 
             openCardSlideshow(cardsData);
         }
@@ -5880,11 +5916,42 @@ pattern_number,title,description,context,solution
                 return;
             }
 
+            // 高解像度生成の確認とプログレス表示
+            const confirmed = confirm(`📊 ${selectedPatterns.size}枚のプリセットカードを高解像度でスライドショー用に生成します。\n\n✨ 高画質設定：2倍解像度（${888*2}×${600*2}px）\n⏱️ 生成時間：約${Math.ceil(selectedPatterns.size * 0.3)}秒\n\nよろしいですか？`);
+            if (!confirmed) return;
+
+            // プログレス表示用の要素を作成
+            const progressDiv = document.createElement('div');
+            progressDiv.style.cssText = `
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                background: rgba(255,255,255,0.95); padding: 20px; border-radius: 12px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.2); z-index: 10000; text-align: center;
+                min-width: 300px; border: 2px solid #667eea;
+            `;
+            progressDiv.innerHTML = `
+                <div style="font-size: 16px; color: #333; margin-bottom: 10px;">🎬 高解像度スライドショー生成中...</div>
+                <div style="background: #f0f0f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div id="presetSlideshowProgress" style="background: linear-gradient(45deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                </div>
+                <div id="presetSlideshowProgressText" style="font-size: 12px; color: #666; margin-top: 8px;">0 / ${selectedPatterns.size} 枚完了</div>
+            `;
+            document.body.appendChild(progressDiv);
+
+            const progressBar = document.getElementById('presetSlideshowProgress');
+            const progressText = document.getElementById('presetSlideshowProgressText');
+
             // プレビュー用にカードデータを生成
             const cardsData = [];
             const sortedPatterns = Array.from(selectedPatterns).sort((a, b) => a - b);
             
-            for (const patternId of sortedPatterns) {
+            for (let i = 0; i < sortedPatterns.length; i++) {
+                const patternId = sortedPatterns[i];
+                
+                // プログレス更新
+                const progress = ((i + 1) / sortedPatterns.length) * 100;
+                progressBar.style.width = progress + '%';
+                progressText.textContent = `${i + 1} / ${sortedPatterns.length} 枚完了 - パターン${patternId}生成中...`;
+                
                 // パターンデータを適用
                 if (patternData[patternId]) {
                     const data = patternData[patternId];
@@ -5901,8 +5968,9 @@ pattern_number,title,description,context,solution
                 // レンダリング完了を待つ
                 await new Promise(resolve => setTimeout(resolve, 150));
                 
+                // 高解像度でカード画像を生成（スライドショー用）
                 const canvas = document.getElementById('cardCanvas');
-                const imageUrl = canvas.toDataURL('image/png');
+                const imageUrl = await exportCanvasAtHighResolution(canvas.fabric, 2);
                 const patternTitle = patternData[patternId] ? patternData[patternId].title : `パターン ${patternId}`;
                 
                 cardsData.push({
@@ -5910,7 +5978,13 @@ pattern_number,title,description,context,solution
                     title: patternTitle,
                     patternId: patternId
                 });
+
+                // UI更新を待つ
+                await new Promise(resolve => setTimeout(resolve, 50));
             }
+
+            // プログレス表示を削除
+            document.body.removeChild(progressDiv);
 
             openCardSlideshow(cardsData);
         }
@@ -5985,7 +6059,7 @@ pattern_number,title,description,context,solution
             // HTMLコンテンツを追加
             newWindow.document.body.innerHTML = `
                 <div class="slideshow-container">
-                    <div class="header"><h1>📚 パターンカード スライドショー</h1></div>
+                    <div class="header"><h1>📚 パターンカード スライドショー ✨ 高解像度（${888*2}×${600*2}px）</h1></div>
                     <div class="card-display">
                         <img id="cardImage" class="card-image" src="${cardsData[0].imageUrl}" alt="Pattern Card">
                         <div class="card-info">
