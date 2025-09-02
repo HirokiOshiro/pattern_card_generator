@@ -5854,59 +5854,100 @@ pattern_number,title,description,context,solution
                     <div id="slideshowProgress" style="background: linear-gradient(45deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.3s;"></div>
                 </div>
                 <div id="slideshowProgressText" style="font-size: 12px; color: #666; margin-top: 8px;">0 / ${csvData.length} 枚完了</div>
+                <button id="cancelSlideshowBtn" style="margin-top: 10px; padding: 8px 16px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="cancelSlideshow = true;">キャンセル</button>
             `;
             document.body.appendChild(progressDiv);
 
             const progressBar = document.getElementById('slideshowProgress');
             const progressText = document.getElementById('slideshowProgressText');
+            let cancelSlideshow = false;
+            
+            // キャンセル処理のグローバル関数
+            window.cancelSlideshow = false;
 
             // プレビュー用にカードデータを生成
             const cardsData = [];
             
-            for (let index = 0; index < csvData.length; index++) {
-                const row = csvData[index];
-                
-                // プログレス更新
-                const progress = ((index + 1) / csvData.length) * 100;
-                progressBar.style.width = progress + '%';
-                progressText.textContent = `${index + 1} / ${csvData.length} 枚完了 - 高解像度生成中...`;
-                
-                // CSVデータをフォームに適用
-                document.getElementById('patternTitle').value = row.title || '';
-                document.getElementById('patternDescription').value = row.description || '';
-                document.getElementById('patternContext').value = row.context || '';
-                document.getElementById('patternSolution').value = row.solution || '';
-                
-                // パターン番号があれば設定
-                if (row.pattern_number) {
-                    document.getElementById('patternSelect').value = row.pattern_number;
+            try {
+                for (let index = 0; index < csvData.length; index++) {
+                    // キャンセルチェック
+                    if (window.cancelSlideshow) {
+                        document.body.removeChild(progressDiv);
+                        alert('スライドショー生成をキャンセルしました。');
+                        return;
+                    }
+
+                    const row = csvData[index];
+                    
+                    // プログレス更新
+                    const progress = ((index + 1) / csvData.length) * 100;
+                    progressBar.style.width = progress + '%';
+                    progressText.textContent = `${index + 1} / ${csvData.length} 枚完了 - 高解像度生成中...`;
+                    
+                    try {
+                        // CSVデータをフォームに適用
+                        document.getElementById('patternTitle').value = row.title || '';
+                        document.getElementById('patternDescription').value = row.description || '';
+                        document.getElementById('patternContext').value = row.context || '';
+                        document.getElementById('patternSolution').value = row.solution || '';
+                        
+                        // パターン番号があれば設定
+                        if (row.pattern_number) {
+                            document.getElementById('patternSelect').value = row.pattern_number;
+                        }
+                        
+                        // カード生成
+                        updateCard();
+                        
+                        // レンダリング完了を待つ
+                        await new Promise(resolve => setTimeout(resolve, 150));
+                        
+                        // canvasが存在するかチェック
+                        if (!canvas) {
+                            throw new Error('キャンバスが初期化されていません');
+                        }
+                        
+                        // 高解像度でカード画像を生成（スライドショー用）
+                        const imageUrl = await exportCanvasAtHighResolution(canvas, 2);
+                        const cardNumber = row.pattern_number || (index + 1);
+                        
+                        cardsData.push({
+                            imageUrl: imageUrl,
+                            title: row.title || `カード ${cardNumber}`,
+                            patternId: cardNumber
+                        });
+
+                        // UI更新を待つ
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        
+                    } catch (error) {
+                        console.error(`カード ${index + 1} の生成中にエラー:`, error);
+                        // エラーが発生してもスキップして続行
+                        progressText.textContent = `${index + 1} / ${csvData.length} - エラーをスキップ中...`;
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
                 }
                 
-                // カード生成
-                updateCard();
+                // プログレス表示を削除
+                if (document.body.contains(progressDiv)) {
+                    document.body.removeChild(progressDiv);
+                }
                 
-                // レンダリング完了を待つ
-                await new Promise(resolve => setTimeout(resolve, 150));
-                
-                // 高解像度でカード画像を生成（スライドショー用）
-                const canvas = document.getElementById('cardCanvas');
-                const imageUrl = await exportCanvasAtHighResolution(canvas.fabric, 2);
-                const cardNumber = row.pattern_number || (index + 1);
-                
-                cardsData.push({
-                    imageUrl: imageUrl,
-                    title: row.title || `カード ${cardNumber}`,
-                    patternId: cardNumber
-                });
+                // 生成されたカードがあるかチェック
+                if (cardsData.length === 0) {
+                    alert('カードの生成に失敗しました。CSVデータまたはキャンバスの状態を確認してください。');
+                    return;
+                }
 
-                // UI更新を待つ
-                await new Promise(resolve => setTimeout(resolve, 50));
+                openCardSlideshow(cardsData);
+                
+            } catch (error) {
+                console.error('スライドショー生成エラー:', error);
+                if (document.body.contains(progressDiv)) {
+                    document.body.removeChild(progressDiv);
+                }
+                alert('スライドショーの生成中にエラーが発生しました:\n' + error.message);
             }
-
-            // プログレス表示を削除
-            document.body.removeChild(progressDiv);
-
-            openCardSlideshow(cardsData);
         }
 
         // プリセットカードのスライドショープレビュー機能
@@ -5934,59 +5975,99 @@ pattern_number,title,description,context,solution
                     <div id="presetSlideshowProgress" style="background: linear-gradient(45deg, #667eea, #764ba2); height: 100%; width: 0%; transition: width 0.3s;"></div>
                 </div>
                 <div id="presetSlideshowProgressText" style="font-size: 12px; color: #666; margin-top: 8px;">0 / ${selectedPatterns.size} 枚完了</div>
+                <button id="cancelPresetSlideshowBtn" style="margin-top: 10px; padding: 8px 16px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="window.cancelPresetSlideshow = true;">キャンセル</button>
             `;
             document.body.appendChild(progressDiv);
 
             const progressBar = document.getElementById('presetSlideshowProgress');
             const progressText = document.getElementById('presetSlideshowProgressText');
+            
+            // キャンセル処理のグローバル関数
+            window.cancelPresetSlideshow = false;
 
             // プレビュー用にカードデータを生成
             const cardsData = [];
             const sortedPatterns = Array.from(selectedPatterns).sort((a, b) => a - b);
             
-            for (let i = 0; i < sortedPatterns.length; i++) {
-                const patternId = sortedPatterns[i];
-                
-                // プログレス更新
-                const progress = ((i + 1) / sortedPatterns.length) * 100;
-                progressBar.style.width = progress + '%';
-                progressText.textContent = `${i + 1} / ${sortedPatterns.length} 枚完了 - パターン${patternId}生成中...`;
-                
-                // パターンデータを適用
-                if (patternData[patternId]) {
-                    const data = patternData[patternId];
-                    document.getElementById('patternTitle').value = data.title;
-                    document.getElementById('patternDescription').value = data.description;
-                    document.getElementById('patternContext').value = data.context;
-                    document.getElementById('patternSolution').value = data.solution;
-                    document.getElementById('patternSelect').value = patternId;
+            try {
+                for (let i = 0; i < sortedPatterns.length; i++) {
+                    // キャンセルチェック
+                    if (window.cancelPresetSlideshow) {
+                        document.body.removeChild(progressDiv);
+                        alert('プリセットスライドショー生成をキャンセルしました。');
+                        return;
+                    }
+
+                    const patternId = sortedPatterns[i];
+                    
+                    // プログレス更新
+                    const progress = ((i + 1) / sortedPatterns.length) * 100;
+                    progressBar.style.width = progress + '%';
+                    progressText.textContent = `${i + 1} / ${sortedPatterns.length} 枚完了 - パターン${patternId}生成中...`;
+                    
+                    try {
+                        // パターンデータを適用
+                        if (patternData[patternId]) {
+                            const data = patternData[patternId];
+                            document.getElementById('patternTitle').value = data.title;
+                            document.getElementById('patternDescription').value = data.description;
+                            document.getElementById('patternContext').value = data.context;
+                            document.getElementById('patternSolution').value = data.solution;
+                            document.getElementById('patternSelect').value = patternId;
+                        }
+                        
+                        // カード生成
+                        updateCard();
+                        
+                        // レンダリング完了を待つ
+                        await new Promise(resolve => setTimeout(resolve, 150));
+                        
+                        // canvasが存在するかチェック
+                        if (!canvas) {
+                            throw new Error('キャンバスが初期化されていません');
+                        }
+                        
+                        // 高解像度でカード画像を生成（スライドショー用）
+                        const imageUrl = await exportCanvasAtHighResolution(canvas, 2);
+                        const patternTitle = patternData[patternId] ? patternData[patternId].title : `パターン ${patternId}`;
+                        
+                        cardsData.push({
+                            imageUrl: imageUrl,
+                            title: patternTitle,
+                            patternId: patternId
+                        });
+
+                        // UI更新を待つ
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        
+                    } catch (error) {
+                        console.error(`パターン ${patternId} の生成中にエラー:`, error);
+                        // エラーが発生してもスキップして続行
+                        progressText.textContent = `${i + 1} / ${sortedPatterns.length} - エラーをスキップ中...`;
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                }
+
+                // プログレス表示を削除
+                if (document.body.contains(progressDiv)) {
+                    document.body.removeChild(progressDiv);
                 }
                 
-                // カード生成
-                updateCard();
-                
-                // レンダリング完了を待つ
-                await new Promise(resolve => setTimeout(resolve, 150));
-                
-                // 高解像度でカード画像を生成（スライドショー用）
-                const canvas = document.getElementById('cardCanvas');
-                const imageUrl = await exportCanvasAtHighResolution(canvas.fabric, 2);
-                const patternTitle = patternData[patternId] ? patternData[patternId].title : `パターン ${patternId}`;
-                
-                cardsData.push({
-                    imageUrl: imageUrl,
-                    title: patternTitle,
-                    patternId: patternId
-                });
+                // 生成されたカードがあるかチェック
+                if (cardsData.length === 0) {
+                    alert('カードの生成に失敗しました。パターンデータまたはキャンバスの状態を確認してください。');
+                    return;
+                }
 
-                // UI更新を待つ
-                await new Promise(resolve => setTimeout(resolve, 50));
+                openCardSlideshow(cardsData);
+                
+            } catch (error) {
+                console.error('プリセットスライドショー生成エラー:', error);
+                if (document.body.contains(progressDiv)) {
+                    document.body.removeChild(progressDiv);
+                }
+                alert('プリセットスライドショーの生成中にエラーが発生しました:\n' + error.message);
             }
-
-            // プログレス表示を削除
-            document.body.removeChild(progressDiv);
-
-            openCardSlideshow(cardsData);
         }
 
         // CSVボタンの状態更新
