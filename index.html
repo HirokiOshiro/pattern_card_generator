@@ -6098,12 +6098,25 @@ pattern_number,title,description,context,solution
             // Phase 2: 本格スライドショー実装
             const newWindow = window.open('', '_blank', 'width=1000,height=700');
             
-            // 基本HTML構造を作成
-            newWindow.document.write('<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>パターンカード スライドショー</title></head><body></body></html>');
-            newWindow.document.close();
+            // Mac対応: ウィンドウが完全にロードされるまで待機
+            if (!newWindow || !newWindow.document) {
+                alert('スライドショーウィンドウの作成に失敗しました。ポップアップブロッカーを確認してください。');
+                return;
+            }
             
-            // CSSスタイルを追加
-            const style = newWindow.document.createElement('style');
+            // ウィンドウのロード完了を待機してから処理を続行
+            setTimeout(() => {
+                if (!newWindow.document) {
+                    alert('スライドショーウィンドウの初期化に失敗しました。');
+                    return;
+                }
+                
+                // 基本HTML構造を作成
+                newWindow.document.write('<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>パターンカード スライドショー</title></head><body></body></html>');
+                newWindow.document.close();
+                
+                // CSSスタイルを追加
+                const style = newWindow.document.createElement('style');
             style.textContent = `
                 body { margin: 0; padding: 0; background: #f5f5f5; color: #333; font-family: Arial, sans-serif; overflow: hidden; }
                 .slideshow-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -6134,117 +6147,118 @@ pattern_number,title,description,context,solution
                     .controls { gap: 8px; bottom: 20px; }
                     .btn { padding: 8px 12px; font-size: 16px; }
                 }
-            `;
-            newWindow.document.head.appendChild(style);
-            
-            // HTMLコンテンツを追加
-            newWindow.document.body.innerHTML = `
-                <div class="slideshow-container">
-                    <div class="header"><h1>📚 パターンカード スライドショー ✨ 高解像度（${888*2}×${600*2}px）</h1></div>
-                    <div class="card-display">
-                        <img id="cardImage" class="card-image" src="${cardsData[0].imageUrl}" alt="Pattern Card">
-                        <div class="card-info">
-                            <div id="cardCounter" class="card-counter">1 / ${cardsData.length}</div>
+                `;
+                newWindow.document.head.appendChild(style);
+                
+                // HTMLコンテンツを追加
+                newWindow.document.body.innerHTML = `
+                    <div class="slideshow-container">
+                        <div class="header"><h1>📚 パターンカード スライドショー ✨ 高解像度（${888*2}×${600*2}px）</h1></div>
+                        <div class="card-display">
+                            <img id="cardImage" class="card-image" src="${cardsData[0].imageUrl}" alt="Pattern Card">
+                            <div class="card-info">
+                                <div id="cardCounter" class="card-counter">1 / ${cardsData.length}</div>
+                            </div>
+                        </div>
+                        <div class="controls">
+                            <button id="prevBtn" class="btn">
+                                <span class="btn-text">← 前へ</span>
+                                <span class="btn-icon">←</span>
+                                <span class="tooltip">前のカード</span>
+                            </button>
+                            <button id="playBtn" class="btn auto-play">
+                                <span class="btn-text">▶ 再生</span>
+                                <span class="btn-icon">▶</span>
+                                <span class="tooltip">自動再生</span>
+                            </button>
+                            <button id="nextBtn" class="btn">
+                                <span class="btn-text">次へ →</span>
+                                <span class="btn-icon">→</span>
+                                <span class="tooltip">次のカード</span>
+                            </button>
+                            <button onclick="window.close()" class="btn">
+                                <span class="btn-text">✕ 閉じる</span>
+                                <span class="btn-icon">✕</span>
+                                <span class="tooltip">スライドショーを閉じる</span>
+                            </button>
                         </div>
                     </div>
-                    <div class="controls">
-                        <button id="prevBtn" class="btn">
-                            <span class="btn-text">← 前へ</span>
-                            <span class="btn-icon">←</span>
-                            <span class="tooltip">前のカード</span>
-                        </button>
-                        <button id="playBtn" class="btn auto-play">
-                            <span class="btn-text">▶ 再生</span>
-                            <span class="btn-icon">▶</span>
-                            <span class="tooltip">自動再生</span>
-                        </button>
-                        <button id="nextBtn" class="btn">
-                            <span class="btn-text">次へ →</span>
-                            <span class="btn-icon">→</span>
-                            <span class="tooltip">次のカード</span>
-                        </button>
-                        <button onclick="window.close()" class="btn">
-                            <span class="btn-text">✕ 閉じる</span>
-                            <span class="btn-icon">✕</span>
-                            <span class="tooltip">スライドショーを閉じる</span>
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            // スライドショー機能を追加
-            newWindow.cardsData = cardsData;
-            newWindow.currentIndex = 0;
-            newWindow.isPlaying = false;
-            newWindow.playInterval = null;
-            
-            newWindow.showCard = function(index) {
-                if (index >= 0 && index < this.cardsData.length) {
-                    this.currentIndex = index;
-                    const card = this.cardsData[index];
-                    this.document.getElementById('cardImage').src = card.imageUrl;
-                    this.document.getElementById('cardCounter').textContent = (index + 1) + ' / ' + this.cardsData.length;
-                    this.document.getElementById('prevBtn').disabled = index === 0;
-                    this.document.getElementById('nextBtn').disabled = index === this.cardsData.length - 1;
-                }
-            };
-            
-            newWindow.nextCard = function() {
-                if (this.currentIndex < this.cardsData.length - 1) {
-                    this.showCard(this.currentIndex + 1);
-                }
-            };
-            
-            newWindow.prevCard = function() {
-                if (this.currentIndex > 0) {
-                    this.showCard(this.currentIndex - 1);
-                }
-            };
-            
-            newWindow.toggleAutoPlay = function() {
-                const playBtn = this.document.getElementById('playBtn');
-                const btnText = playBtn.querySelector('.btn-text');
-                const btnIcon = playBtn.querySelector('.btn-icon');
-                const tooltip = playBtn.querySelector('.tooltip');
+                `;
                 
-                if (this.isPlaying) {
-                    clearInterval(this.playInterval);
-                    btnText.textContent = '▶ 再生';
-                    btnIcon.textContent = '▶';
-                    tooltip.textContent = '自動再生';
-                    playBtn.classList.remove('playing');
-                    this.isPlaying = false;
-                } else {
-                    const self = this;
-                    this.playInterval = setInterval(function() {
-                        if (self.currentIndex < self.cardsData.length - 1) {
-                            self.nextCard();
-                        } else {
-                            self.showCard(0);
-                        }
-                    }, 3000);
-                    btnText.textContent = '⏸ 停止';
-                    btnIcon.textContent = '⏸';
-                    tooltip.textContent = '自動再生を停止';
-                    playBtn.classList.add('playing');
-                    this.isPlaying = true;
-                }
-            };
+                // スライドショー機能を追加
+                newWindow.cardsData = cardsData;
+                newWindow.currentIndex = 0;
+                newWindow.isPlaying = false;
+                newWindow.playInterval = null;
             
-            // イベントリスナーを設定
-            newWindow.document.getElementById('prevBtn').onclick = function() { newWindow.prevCard(); };
-            newWindow.document.getElementById('nextBtn').onclick = function() { newWindow.nextCard(); };
-            newWindow.document.getElementById('playBtn').onclick = function() { newWindow.toggleAutoPlay(); };
+                newWindow.showCard = function(index) {
+                    if (index >= 0 && index < this.cardsData.length) {
+                        this.currentIndex = index;
+                        const card = this.cardsData[index];
+                        this.document.getElementById('cardImage').src = card.imageUrl;
+                        this.document.getElementById('cardCounter').textContent = (index + 1) + ' / ' + this.cardsData.length;
+                        this.document.getElementById('prevBtn').disabled = index === 0;
+                        this.document.getElementById('nextBtn').disabled = index === this.cardsData.length - 1;
+                    }
+                };
+                
+                newWindow.nextCard = function() {
+                    if (this.currentIndex < this.cardsData.length - 1) {
+                        this.showCard(this.currentIndex + 1);
+                    }
+                };
+                
+                newWindow.prevCard = function() {
+                    if (this.currentIndex > 0) {
+                        this.showCard(this.currentIndex - 1);
+                    }
+                };
+                
+                newWindow.toggleAutoPlay = function() {
+                    const playBtn = this.document.getElementById('playBtn');
+                    const btnText = playBtn.querySelector('.btn-text');
+                    const btnIcon = playBtn.querySelector('.btn-icon');
+                    const tooltip = playBtn.querySelector('.tooltip');
+                    
+                    if (this.isPlaying) {
+                        clearInterval(this.playInterval);
+                        btnText.textContent = '▶ 再生';
+                        btnIcon.textContent = '▶';
+                        tooltip.textContent = '自動再生';
+                        playBtn.classList.remove('playing');
+                        this.isPlaying = false;
+                    } else {
+                        const self = this;
+                        this.playInterval = setInterval(function() {
+                            if (self.currentIndex < self.cardsData.length - 1) {
+                                self.nextCard();
+                            } else {
+                                self.showCard(0);
+                            }
+                        }, 3000);
+                        btnText.textContent = '⏸ 停止';
+                        btnIcon.textContent = '⏸';
+                        tooltip.textContent = '自動再生を停止';
+                        playBtn.classList.add('playing');
+                        this.isPlaying = true;
+                    }
+                };
             
-            newWindow.document.addEventListener('keydown', function(e) {
-                if (e.key === 'ArrowLeft') newWindow.prevCard();
-                if (e.key === 'ArrowRight') newWindow.nextCard();
-                if (e.key === ' ') { e.preventDefault(); newWindow.toggleAutoPlay(); }
-                if (e.key === 'Escape') newWindow.close();
-            });
-            
-            newWindow.showCard(0);
-            newWindow.focus();
+                // イベントリスナーを設定
+                newWindow.document.getElementById('prevBtn').onclick = function() { newWindow.prevCard(); };
+                newWindow.document.getElementById('nextBtn').onclick = function() { newWindow.nextCard(); };
+                newWindow.document.getElementById('playBtn').onclick = function() { newWindow.toggleAutoPlay(); };
+                
+                newWindow.document.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowLeft') newWindow.prevCard();
+                    if (e.key === 'ArrowRight') newWindow.nextCard();
+                    if (e.key === ' ') { e.preventDefault(); newWindow.toggleAutoPlay(); }
+                    if (e.key === 'Escape') newWindow.close();
+                });
+                
+                newWindow.showCard(0);
+                newWindow.focus();
+            }, 100); // setTimeout の終了
         }
     </script>
 
