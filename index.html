@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>問いかけカード生成ツール</title>
+    <title>パターンカード生成ツール</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
@@ -2474,7 +2474,7 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>問いかけカード生成ツール</h1>
+            <h1>パターン・カード生成ツール</h1>
         </div>
     </div>
 
@@ -2484,13 +2484,53 @@
             <div class="sidebar">
                 <div class="info-panel">
                     <h3>📚 井庭崇先生のパターン・ランゲージを活用したクリエティブ・ラーニング研究から着想を得たツール</h3>
-                    <p>井庭先生の創造的学習のための40のパターン（<a href="https://gakkai.sfc.keio.ac.jp/journal/.assets/SFCJ14-1-05.pdf" target="_blank">論文1</a>・<a href="https://web.sfc.keio.ac.jp/~iba/papers/PURPLSOC14_Dialogue.pdf" target="_blank">論文2</a>・<a href="https://creativeshift.co.jp/pattern-lang/" target="_blank">Webページ</a>）を参考にした質問カード（プリセット分）を出力したり、オリジナルの問いかけカードを作成して出力することができます。</p>
+                    <p>井庭先生の創造的学習のための40のパターン（<a href="https://gakkai.sfc.keio.ac.jp/journal/.assets/SFCJ14-1-05.pdf" target="_blank">論文1</a>・<a href="https://web.sfc.keio.ac.jp/~iba/papers/PURPLSOC14_Dialogue.pdf" target="_blank">論文2</a>・<a href="https://creativeshift.co.jp/pattern-lang/" target="_blank">Webページ</a>）を参考にしたカード（プリセット分）を出力したり、オリジナルのパターンカードを作成して出力することができます。</p>
                 </div>
 
                 <div class="form-group">
-                    <label for="patternSelect">プリセット選択</label>
+                    <label for="patternSelect">パターン選択</label>
                     <select id="patternSelect" onchange="loadPatternData()">
-                        <!-- オプションはJavaScriptで動的生成 -->
+                        <option value="">カスタム（独自作成）</option>
+                        <option value="0">0. 創造的な学び</option>
+                        <option value="1">1. 学びのチャンス</option>
+                        <option value="2">2. つくることによる学び</option>
+                        <option value="3">3. 学びをひらく</option>
+                        <option value="4">4. まずはつかる</option>
+                        <option value="5">5. まねぶことから</option>
+                        <option value="6">6. 教わり上手になる</option>
+                        <option value="7">7. アウトプットから始まる学び</option>
+                        <option value="8">8. 外国語の普段使い</option>
+                        <option value="9">9. 学びのなかの遊び</option>
+                        <option value="10">10. 学びの竜巻</option>
+                        <option value="11">11. 知のワクワク</option>
+                        <option value="12">12. 量は質を生む</option>
+                        <option value="13">13. 身体で覚える</option>
+                        <option value="14">14. 言語のシャワー</option>
+                        <option value="15">15. 成長の発見</option>
+                        <option value="16">16. 動きの中で考える</option>
+                        <option value="17">17. プロトタイピング</option>
+                        <option value="18">18. フィールドに飛び込む</option>
+                        <option value="19">19. 鳥の眼と虫の眼</option>
+                        <option value="20">20. 隠れた関係性から学ぶ</option>
+                        <option value="21">21. 広げながら掘り下げる</option>
+                        <option value="22">22. 探究への情熱</option>
+                        <option value="23">23. 右脳と左脳のスイッチ</option>
+                        <option value="24">24. 小さく生んで大きく育てる</option>
+                        <option value="25">25. 魅せる力</option>
+                        <option value="26">26. 「書き上げた」は道半ば</option>
+                        <option value="27">27. ゴール前のアクセル</option>
+                        <option value="28">28. 学びの共同体をつくる</option>
+                        <option value="29">29. 偶有的な出会い</option>
+                        <option value="30">30. ライバルをつくる</option>
+                        <option value="31">31. はなすことでわかる</option>
+                        <option value="32">32. 教えることによる学び</option>
+                        <option value="33">33. 断固たる決意</option>
+                        <option value="34">34. 自分で考える</option>
+                        <option value="35">35. 目的へのアプローチ</option>
+                        <option value="36">36. 捨てる勇気</option>
+                        <option value="37">37. フロンティア・アンテナ</option>
+                        <option value="38">38. セルフ・プロデュース</option>
+                        <option value="39">39. 突き抜ける</option>
                     </select>
                 </div>
 
@@ -2687,13 +2727,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="questionTheme">問いのテーマ</label>
-                    <input type="text" id="questionTheme" placeholder="問いのテーマを入力" oninput="updateCard()">
+                    <label for="patternTitle">パターン名</label>
+                    <input type="text" id="patternTitle" placeholder="パターン名を入力" oninput="updateCard()">
                 </div>
 
                 <div class="form-group">
-                    <label for="questionContent">具体的な問いかけ</label>
-                    <textarea id="questionContent" placeholder="具体的な問いかけを入力してください..." oninput="updateCard()"></textarea>
+                    <label for="patternDescription">説明</label>
+                    <textarea id="patternDescription" placeholder="パターンの説明を入力してください..." oninput="updateCard()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="patternContext">場面・状況</label>
+                    <textarea id="patternContext" placeholder="パターンが適用される場面や状況を記述..." oninput="updateCard()"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="patternSolution">工夫・トライアル</label>
+                    <textarea id="patternSolution" placeholder="課題に対する工夫や試してみたいことを記述..." oninput="updateCard()"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -2767,12 +2817,12 @@
                         <div class="ai-guide-header" onclick="toggleAIGuide()">
                             <div class="ai-guide-title">
                                 <span>🤖</span>
-                                <span>AIを活用した問いかけカードの作成 - CSV自動生成プロンプト</span>
+                                <span>AIを活用したパターン・カードの作成 - CSV自動生成プロンプト</span>
                                 <button class="help-button" onclick="event.stopPropagation(); showAIHelp()" title="使い方ガイドを表示">?</button>
                             </div>
-                            <span class="ai-guide-toggle expanded" id="aiGuideToggle">▲</span>
+                            <span class="ai-guide-toggle" id="aiGuideToggle">▼</span>
                         </div>
-                        <div class="ai-guide-content expanded" id="aiGuideContent">
+                        <div class="ai-guide-content" id="aiGuideContent">
                             <!-- ステップインジケーター -->
                             <div class="step-indicator">
                                 <div class="step-item active" data-step="1">
@@ -2810,120 +2860,124 @@
                                 <!-- 書籍指定用テンプレート -->
                                 <div class="template-card">
                                     <h4>📚 書籍指定用</h4>
-                                    <textarea class="template-textarea" readonly>「[書籍名を入力]」の内容から、学習・成長を促進する質問カード用の問いかけを10-15個作成し、以下のCSV形式で出力してください。
+                                    <textarea class="template-textarea" readonly>「[書籍名を入力]」の内容から、個人の学習・成長を促進する行動パターンを10-15個抽出し、以下のCSV形式で出力してください。
 
 CSVヘッダー：
-pattern_number,title,description
+pattern_number,title,description,context,solution
 
 条件：
 - pattern_numberは1から連番で番号を振る
-- titleは質問のテーマを簡潔に（全角20文字以内）
-- descriptionは具体的な問いかけの内容を記述（全角100-150文字程度）
+- titleはパターン名を簡潔に（全角20文字以内）
+- descriptionは説明文を全角50文字以内で簡潔に
+- contextは「〜な状況で」という形で記述（全角50文字以内）
+- solutionは具体的な行動として記述（全角50文字以内）
 
 出力形式：
 以下の条件でCSVファイルの内容のみ、ファイルを.csv形式もしくは.txt形式でダウンロードできるように出力してください：
 ・アーティファクトのtypeを"text/csv"に設定する
 ・MIMEタイプをCSV形式として認識させる
 ・可能な場合はダウンロード用CSVファイルを作成して、ダウンロード用のリンクを発行してください
-・1行目：ヘッダー行（pattern_number,title,description）
+・1行目：ヘッダー行（pattern_number,title,description,context,solution）
 ・2行目以降：データ行（カンマ区切り、改行区切り）
 ・説明文やその他のテキストは一切含めない
 ・CSVデータのみを出力する
 
 例：
-pattern_number,title,description
-1,学習の本質を問う,なぜその知識が必要なのか？それがないと何に困るのか？その知識を使って何を実現したいのか？
-2,理解の深さを確認する,今学んだことを誰かに説明するとしたら、どのような順序でどのように伝えるだろうか？</textarea>
+pattern_number,title,description,context,solution
+1,疑問駆動型の学習,「なぜ？」を起点・足場にしながら深い理解への道筋を探る,新しい概念に出会ったがその本質が見えない状況で,まず「これは何のためにあるのか？ないとどうなるのか？」と問いかけ関連性を探ってみる</textarea>
                                     <button class="copy-button" onclick="copyTemplate(this, 'book')">📋 コピー</button>
                                 </div>
 
                                 <!-- 資料アップロード用テンプレート -->
                                 <div class="template-card">
                                     <h4>📄 資料アップロード用</h4>
-                                    <textarea class="template-textarea" readonly>アップロードした資料の内容から、学習・成長を促進する質問カード用の問いかけを10-15個作成し、以下のCSV形式で出力してください。
+                                    <textarea class="template-textarea" readonly>アップロードした資料の内容から、個人の学習・成長を促進する行動パターンを10-15個抽出し、以下のCSV形式で出力してください。
 
 CSVヘッダー：
-pattern_number,title,description
+pattern_number,title,description,context,solution
 
 条件：
 - pattern_numberは1から連番で番号を振る
-- titleは質問のテーマを簡潔に（全角20文字以内）
-- descriptionは具体的な問いかけの内容を記述（全角100-150文字程度）
+- titleはパターン名を簡潔に（全角20文字以内）
+- descriptionは説明文を全角50文字以内で簡潔に
+- contextは「〜な状況で」という形で記述（全角50文字以内）
+- solutionは具体的な行動として記述（全角50文字以内）
 
 出力形式：
 以下の条件でCSVファイルの内容のみ、ファイルを.csv形式もしくは.txt形式でダウンロードできるように出力してください：
 ・アーティファクトのtypeを"text/csv"に設定する
 ・MIMEタイプをCSV形式として認識させる
 ・可能な場合はダウンロード用CSVファイルを作成して、ダウンロード用のリンクを発行してください
-・1行目：ヘッダー行（pattern_number,title,description）
+・1行目：ヘッダー行（pattern_number,title,description,context,solution）
 ・2行目以降：データ行（カンマ区切り、改行区切り）
 ・説明文やその他のテキストは一切含めない
 ・CSVデータのみを出力する
 
 例：
-pattern_number,title,description
-1,重要度の見極め,この資料の中で最も重要だと思う3つのポイントは何か？それぞれがなぜ重要だと感じるのか？
-2,実践への転換,この資料から学んだことを実際の行動に移すとしたら、明日からできることは何か？</textarea>
+pattern_number,title,description,context,solution
+1,価値基準の見極め,本当に重要なことを判断する思考プロセスを呼び起こす,多くのタスクに追われ何から手をつけるべきか迷う状況で,「これは自分の目標にどう結びつけられるのか？」と自問して選択してみる</textarea>
                                     <button class="copy-button" onclick="copyTemplate(this, 'document')">📋 コピー</button>
                                 </div>
 
                                 <!-- ウェブリンク用テンプレート -->
                                 <div class="template-card">
                                     <h4>🔗 ウェブリンク用</h4>
-                                    <textarea class="template-textarea" readonly>次のリンク先の内容から、学習・成長を促進する質問カード用の問いかけを10-15個作成し、以下のCSV形式で出力してください。→[URL を入力]
+                                    <textarea class="template-textarea" readonly>次のリンク先の内容から、個人の学習・成長を促進する行動パターンを10-15個抽出し、以下のCSV形式で出力してください。→[URL を入力]
 
 CSVヘッダー：
-pattern_number,title,description
+pattern_number,title,description,context,solution
 
 条件：
 - pattern_numberは1から連番で番号を振る
-- titleは質問のテーマを簡潔に（全角20文字以内）
-- descriptionは具体的な問いかけの内容を記述（全角100-150文字程度）
+- titleはパターン名を簡潔に（全角20文字以内）
+- descriptionは説明文を全角50文字以内で簡潔に
+- contextは「〜な状況で」という形で記述（全角50文字以内）
+- solutionは具体的な行動として記述（全角50文字以内）
 
 出力形式：
 以下の条件でCSVファイルの内容のみ、ファイルを.csv形式もしくは.txt形式でダウンロードできるように出力してください：
 ・アーティファクトのtypeを"text/csv"に設定する
 ・MIMEタイプをCSV形式として認識させる
 ・可能な場合はダウンロード用CSVファイルを作成して、ダウンロード用のリンクを発行してください
-・1行目：ヘッダー行（pattern_number,title,description）
+・1行目：ヘッダー行（pattern_number,title,description,context,solution）
 ・2行目以降：データ行（カンマ区切り、改行区切り）
 ・説明文やその他のテキストは一切含めない
 ・CSVデータのみを出力する
 
 例：
-pattern_number,title,description
-1,動機の源泉を探る,この情報に対して自分はなぜ興味を感じるのか？それは自分の何とつながっているのか？
-2,応用可能性の検討,この内容を自分の状況に応用するとしたら、どの部分がそのまま使えて、どの部分を調整する必要があるか？</textarea>
+pattern_number,title,description,context,solution
+1,内発的動機の発見,「なぜこれをやりたいのか？」を問いかけ確認しながら進む,新しい習慣を始めてもモチベーションが続かない状況で,「これが達成されたら自分の何がどう変わりそうか？」と想像してみる</textarea>
                                     <button class="copy-button" onclick="copyTemplate(this, 'web')">📋 コピー</button>
                                 </div>
 
                                 <!-- 自由テーマ用テンプレート -->
                                 <div class="template-card">
                                     <h4>💭 自由テーマ用</h4>
-                                    <textarea class="template-textarea" readonly">「[テーマを入力（例：プログラミング学習、語学習得、キャリア開発など）]」に関する学習・成長を促進する質問カード用の問いかけを10-15個作成し、以下のCSV形式で出力してください。
+                                    <textarea class="template-textarea" readonly>「[テーマを入力（例：プログラミング学習、語学習得、キャリア開発など）」に関する個人の学習・成長を促進する行動パターンを10-15個作成し、以下のCSV形式で出力してください。
 
 CSVヘッダー：
-pattern_number,title,description
+pattern_number,title,description,context,solution
 
 条件：
 - pattern_numberは1から連番で番号を振る
-- titleは質問のテーマを簡潔に（全角20文字以内）
-- descriptionは具体的な問いかけの内容を記述（全角100-150文字程度）
+- titleはパターン名を簡潔に（全角20文字以内）
+- descriptionは説明文を全角50文字以内で簡潔に
+- contextは「〜な状況で」という形で記述（全角50文字以内）
+- solutionは具体的な行動として記述（全角50文字以内）
 
 出力形式：
 以下の条件でCSVファイルの内容のみ、ファイルを.csv形式もしくは.txt形式でダウンロードできるように出力してください：
 ・アーティファクトのtypeを"text/csv"に設定する
 ・MIMEタイプをCSV形式として認識させる
 ・可能な場合はダウンロード用CSVファイルを作成して、ダウンロード用のリンクを発行してください
-・1行目：ヘッダー行（pattern_number,title,description）
+・1行目：ヘッダー行（pattern_number,title,description,context,solution）
 ・2行目以降：データ行（カンマ区切り、改行区切り）
 ・説明文やその他のテキストは一切含めない
 ・CSVデータのみを出力する
 
 例：
-pattern_number,title,description
-1,学習目標の明確化,このテーマについて学ぶことで、自分は何ができるようになりたいのか？その状態になったら何が変わるのか？
-2,現状の把握,このテーマについて今自分が知っていること、できることは何か？逆に知らない・できないことは何か？</textarea>
+pattern_number,title,description,context,solution
+1,コードとの対話,コードとの「会話」を通じて個々の要素を結びつけながら理解を深めていく,複雑なコードを前にして理解が進まない状況で,「この処理は何を解決しようとしているのか？」と問いかけてみる</textarea>
                                     <button class="copy-button" onclick="copyTemplate(this, 'theme')">📋 コピー</button>
                                 </div>
                             </div>
@@ -2964,7 +3018,7 @@ pattern_number,title,description
                             <div class="guide-content" id="csvGuideContent" style="display: none;">
                                 <div class="guide-intro">
                                     <h4>🎯 CSVファイルを使った最速カード生成</h4>
-                                    <p>CSVファイルがあれば1-2分で複数の問いかけカードを一括生成できます。</p>
+                                    <p>CSVファイルがあれば1-2分で複数のパターンカードを一括生成できます。</p>
                                 </div>
                                 
                                 <div class="csv-guide-steps">
@@ -2976,12 +3030,15 @@ pattern_number,title,description
                                         <div class="step-content">
                                             <p><strong>必要な列：</strong></p>
                                             <ul>
-                                                <li><code>title</code> - 質問のテーマ</li>
-                                                <li><code>description</code> - 具体的な問いかけ</li>
+                                                <li><code>title</code> - パターンのタイトル</li>
+                                                <li><code>description</code> - パターンの説明</li>
+                                                <li><code>context</code> - 使用する場面</li>
+                                                <li><code>solution</code> - 解決策・工夫</li>
                                             </ul>
                                             <p><strong>オプション列：</strong></p>
                                             <ul>
                                                 <li><code>pattern_number</code> - カード番号</li>
+                                                <li><code>template</code> - デザインテンプレート</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -3028,7 +3085,7 @@ pattern_number,title,description
                                             <strong>🔧 作成方法：</strong>Excel, Googleスプレッドシート、ChatGPT等のAIツールで作成可能
                                         </li>
                                         <li>
-                                            <strong>📝 文字数目安：</strong>テーマ：20文字以内、質問内容：100-150文字程度
+                                            <strong>📝 文字数目安：</strong>タイトル：20文字以内、説明・場面・工夫：各150文字程度
                                         </li>
                                         <li>
                                             <strong>⚠️ 注意事項：</strong>カンマを含む文字は""で囲む、改行は含まない
@@ -3056,7 +3113,7 @@ pattern_number,title,description
                                                 <span class="template-icon">🤖</span>
                                                 <strong>AI自動生成を利用</strong>
                                             </div>
-                                            <p>書籍やテーマを指定して問いかけカードのCSVデータを自動生成できます。</p>
+                                            <p>書籍やテーマを指定してパターンカードのCSVデータを自動生成できます。</p>
                                             <button class="csv-template-btn secondary" onclick="openAIGuideSection()">
                                                 🤖 AI生成セクションへ
                                             </button>
@@ -3068,11 +3125,11 @@ pattern_number,title,description
                                                 <span class="template-icon">📦</span>
                                                 <strong>プリセット利用</strong>
                                             </div>
-                                            <p>予め用意したパターンから選択して即座にカード生成できます。</p>
+                                            <p>井庭崇先生の既存40パターンから選択して即座にカード生成できます。</p>
                                             <button class="csv-template-btn secondary" onclick="scrollToSection('preset-batch-section')">
                                                 📦 プリセット選択へ
                                             </button>
-                                            <small>学習支援の質問例から選択、CSV作成不要</small>
+                                            <small>実証済みのパターンから選択、CSV作成不要</small>
                                         </div>
                                     </div>
                                 </div>
@@ -3108,7 +3165,7 @@ pattern_number,title,description
                             <div class="format-guide">
                                 <h4>📋 必要なデータ形式</h4>
                                 <div class="format-example">
-                                    <code>pattern_number,title,description</code>
+                                    <code>pattern_number,title,description,context,solution</code>
                                 </div>
                                 <div class="format-details">
                                     <div class="format-item">
@@ -3166,7 +3223,7 @@ pattern_number,title,description
                                         </div>
                                         
                                         <div style="margin-bottom: 12px;">
-                                            <label for="csvEditTitle" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">質問テーマ</label>
+                                            <label for="csvEditTitle" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">タイトル</label>
                                             <input type="text" id="csvEditTitle" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px;" oninput="updateCardFromCSVEdit()">
                                         </div>
                                         
@@ -3179,16 +3236,16 @@ pattern_number,title,description
                                     <!-- 右側：詳細情報 -->
                                     <div>
                                         <div style="margin-bottom: 12px;">
-                                            <label for="csvEditDescription" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">問いかけ内容</label>
-                                            <textarea id="csvEditDescription" style="width: 100%; min-height: 80px; padding: 6px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;" oninput="updateCardFromCSVEdit()"></textarea>
+                                            <label for="csvEditDescription" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">説明</label>
+                                            <textarea id="csvEditDescription" style="width: 100%; min-height: 50px; padding: 6px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;" oninput="updateCardFromCSVEdit()"></textarea>
                                         </div>
                                         
-                                        <div style="margin-bottom: 12px; display: none;">
+                                        <div style="margin-bottom: 12px;">
                                             <label for="csvEditContext" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">場面・状況</label>
                                             <textarea id="csvEditContext" style="width: 100%; min-height: 40px; padding: 6px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;" oninput="updateCardFromCSVEdit()"></textarea>
                                         </div>
                                         
-                                        <div style="margin-bottom: 12px; display: none;">
+                                        <div style="margin-bottom: 12px;">
                                             <label for="csvEditSolution" style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px;">工夫・トライアル</label>
                                             <textarea id="csvEditSolution" style="width: 100%; min-height: 40px; padding: 6px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;" oninput="updateCardFromCSVEdit()"></textarea>
                                         </div>
@@ -3285,7 +3342,7 @@ pattern_number,title,description
                                 <button class="btn btn-primary" onclick="generateCSVBatch()" id="generateCSVBtn" style="font-size: 14px; padding: 10px 20px;">
                                     🎨 CSVデータを一括生成
                                 </button>
-                                <button class="btn btn-secondary btn-slideshow" onclick="previewCSVSlideshow()" id="csvSlideshowBtn" style="border: none; font-size: 14px; padding: 10px 20px; margin-left: 10px;">
+                                <button class="btn btn-secondary" onclick="previewCSVSlideshow()" id="csvSlideshowBtn" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; font-size: 14px; padding: 10px 20px; margin-left: 10px;">
                                     🎬 CSVカードをスライドショー
                                 </button>
                             </div>
@@ -3302,7 +3359,7 @@ pattern_number,title,description
 
 
                     <div id="preset-batch-section" class="preset-batch-header" onclick="togglePresetBatch()" style="cursor: pointer; margin-bottom: 20px; padding: 15px; background: #f8f9ff; border: 2px solid #e1e8ed; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
-                        <h2 style="margin: 0; color: #444;">📦 問いかけカード（プリセット）一括生成</h2>
+                        <h2 style="margin: 0; color: #444;">📦 パターンカード（プリセット）一括生成</h2>
                         <span id="presetBatchToggle" style="font-size: 20px; color: #666; transition: transform 0.3s ease;">▼</span>
                     </div>
                     
@@ -3335,7 +3392,7 @@ pattern_number,title,description
                         <button class="btn btn-primary" onclick="generateBatch()" id="generateBatchBtn">
                             🎨 選択カード一括生成
                         </button>
-                        <button class="btn btn-secondary btn-slideshow" onclick="previewSlideshowBatch()" id="slideshowPreviewBtn" style="border: none;">
+                        <button class="btn btn-secondary" onclick="previewSlideshowBatch()" id="slideshowPreviewBtn" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none;">
                             🎬 スライドショー
                         </button>
                     </div>
@@ -3346,7 +3403,7 @@ pattern_number,title,description
                     </div>
                     
                     <div class="pattern-grid" id="patternGrid">
-                        <!-- プリセット選択項目は JavaScript で生成 -->
+                        <!-- パターン選択項目は JavaScript で生成 -->
                     </div>
                     </div> <!-- プリセット一括生成コンテンツ終了 -->
                 </div>
@@ -3482,48 +3539,48 @@ pattern_number,title,description
             }
         };
         
-        // パターンデータ（問いのカードプリセット分）
+        // パターンデータ（井庭崇の40個のラーニング・パターン完全版）
         const patternData = {
-            0: { title: "学習の目的", description: "なぜこの学習をするのですか？この学びから何を得たいですか？" },
-            1: { title: "学習機会の創出", description: "どのような場面で新しい学びの機会を見つけることができますか？" },
-            2: { title: "実践的学習", description: "学んだことを実際に形にするとしたら、何を作ってみますか？" },
-            3: { title: "学習の共有", description: "あなたの学習プロセスを他の人と共有するとしたら、どのような方法がありますか？" },
-            4: { title: "最初の一歩", description: "完璧を求めずに、まず始めてみるとしたら何から取り組みますか？" },
-            5: { title: "模倣から学習", description: "優れた人の行動で、真似してみたいことは何ですか？" },
-            6: { title: "質問する力", description: "理解を深めるために、どのような質問を投げかけますか？" },
-            7: { title: "アウトプット志向", description: "学習の成果として、どのような作品や成果物を生み出したいですか？" },
-            8: { title: "継続学習", description: "毎日の学習習慣を築くために、どのような小さな行動から始めますか？" },
-            9: { title: "楽しい学習", description: "学習をより楽しくするために、どのような工夫や要素を取り入れますか？" },
-            10: { title: "学習の勢い", description: "興味を持ったトピックから、どのように学習範囲を広げていきますか？" },
-            11: { title: "学習のワクワク", description: "学習への興味をさらに深めるために、次に何を探求してみたいですか？" },
-            12: { title: "多角的な視点", description: "一つの問題を異なる視点から見るとき、どのような切り口が考えられますか？" },
-            13: { title: "体験学習", description: "実際に手を動かして学ぶとしたら、どのような実践から始めますか？" },
-            14: { title: "情報のシャワー", description: "新しい分野について学ぶとき、どのような情報源から学習を始めますか？" },
-            15: { title: "成長の実感", description: "自分の学習成果を実感するために、どのような記録や振り返りを行いますか？" },
-            16: { title: "行動しながら考える", description: "実際に動きながら考えるとき、どのようなアクションを起こしてみますか？" },
-            17: { title: "試作から学ぶ", description: "アイデアを形にする最初の試作品として、何を作ってみますか？" },
-            18: { title: "現場体験", description: "理論だけでなく実際の現場で学ぶとしたら、どこに飛び込んでみたいですか？" },
-            19: { title: "大局と詳細", description: "全体像を把握しながらも、どの詳細部分に特に注目してみますか？" },
-            20: { title: "意外なつながり", description: "異なる分野や概念の間で、どのような共通点や関連性を見つけられますか？" },
-            21: { title: "段階的成長", description: "このスキルを習得するために、どのような段階を踏んで学習を進めますか？" },
-            22: { title: "探求心", description: "未知の領域で最も探求してみたいテーマや問いは何ですか？" },
-            23: { title: "創造モード", description: "創造性を最大限に発揮するために、どのような環境や方法を試してみますか？" },
-            24: { title: "長期育成", description: "長期的に成長させたい能力やスキルについて、どのように育てていきますか？" },
-            25: { title: "表現力", description: "あなたの学びや考えを他の人に魅力的に伝えるとしたら、どう表現しますか？" },
-            26: { title: "完成への道", description: "最初の不完全な版から、どのようにして理想的な完成形に近づけますか？" },
-            27: { title: "次への推進力", description: "今の学習成果を、次のより大きな挑戦への原動力とするには？" },
-            28: { title: "学習共同体", description: "共に学び成長できるコミュニティを作るとしたら、どんな仕組みにしますか？" },
-            29: { title: "偶然の出会い", description: "予想外の出会いや発見から、どのような学習のきっかけを見つけられますか？" },
-            30: { title: "良きライバル", description: "あなたを成長させてくれる競争相手や目標とする人は誰ですか？" },
-            31: { title: "声に出す力", description: "考えを声に出すことで、どのような新しい発見や整理ができますか？" },
-            32: { title: "教えて学ぶ", description: "他の人に教える経験から、あなた自身が学べることは何ですか？" },
-            33: { title: "強い意志", description: "困難な状況でも学び続けるために、どのような決意や覚悟を持ちますか？" },
-            34: { title: "自分で考える", description: "常に疑問を持ち続けるために、どのような問いかけを自分にしますか？" },
-            35: { title: "効果的アプローチ", description: "最も効率的に学習目標を達成するための方法は何ですか？" },
-            36: { title: "変化の勇気", description: "今の学習方法を変えるとしたら、どのような新しい挑戦をしてみますか？" },
-            37: { title: "未開拓領域", description: "まだ誰も取り組んでいない新しい学習分野で探求したいことは何ですか？" },
-            38: { title: "学習プロデュース", description: "自分の学習をプロデュースするとしたら、どのような戦略を立てますか？" },
-            39: { title: "突破する力", description: "従来の枠を破って新しいレベルに到達するために、どんな極端なアプローチを試しますか？" }
+            0: { title: "創造的な学び", description: "自分なりの学習方法をデザインし、創造的な学習を実現する。", context: "学習を始めるとき、新しい分野を学習するとき。", solution: "学習目標を明確にし、自分に合った学習スタイルを設計する。" },
+            1: { title: "学びのチャンス", description: "学習の機会を積極的に創り出し、学びのきっかけを増やす。", context: "学習機会が少ないと感じるとき。", solution: "環境や人との関わりを通じて、新しい学習機会を作り出す。" },
+            2: { title: "つくることによる学び", description: "プロジェクトを通じた実践的で創造的な学習を行う。", context: "実践的なスキルを身につけたいとき。", solution: "具体的なアウトプットを目標にしたプロジェクトに取り組む。" },
+            3: { title: "学びをひらく", description: "学習プロセスをオープンにし、他者と共有しながら学ぶ。", context: "一人で学習していて行き詰まりを感じるとき。", solution: "学習過程を可視化し、他者との対話を通じて学びを深める。" },
+            4: { title: "まずはつかる", description: "完璧を求めず、まずは飛び込んで体験から学ぶ。", context: "新しいことを始める際に躊躇してしまうとき。", solution: "準備よりもまず行動し、体験を通じて学習を開始する。" },
+            5: { title: "まねぶことから", description: "優れた事例を模倣することから学習を始める。", context: "何から始めればよいかわからないとき。", solution: "熟練者の行動を観察し、まずは真似することから始める。" },
+            6: { title: "教わり上手になる", description: "適切な質問を通じて学習を深化させ、新しい洞察を得る。", context: "理解が表面的に留まっているとき、学びを深めたいとき。", solution: "核心を突く質問を投げかけ、考えを整理し理解を深める。" },
+            7: { title: "アウトプットから始まる学び", description: "何かを作り出すことを通じて知識とスキルを向上させる。", context: "勉強時、クラス選択時、新しいスキルを学びたいとき。", solution: "アウトプットを作ることを目標に学習し、プロセスでスキルを向上させる。" },
+            8: { title: "外国語の普段使い", description: "外国語学習を日常的な習慣にして継続的にスキルを向上させる。", context: "外国語を習得したいとき、語学スキルを維持したいとき。", solution: "毎日少しずつでも外国語に触れる環境を作り、継続的に学習する。" },
+            9: { title: "学びのなかの遊び", description: "楽しみながら学ぶことで、学習の効果と持続性を高める。", context: "学習が退屈に感じるとき、モチベーションが低下したとき。", solution: "ゲーム要素や楽しい要素を取り入れて学習に遊び心を持たせる。" },
+            10: { title: "学びの竜巻", description: "興味と関連して知識を積極的につかみ、学習に勢いをつける。", context: "勉強、読書、研究を行う時、自分なりの方法でやりたい時。", solution: "興味に合った学習を選び、情報を積極的につかんで知識を混合する。" },
+            11: { title: "知のワクワク", description: "学習への興奮を連鎖させ、継続的な学習意欲を維持する。", context: "学習のモチベーションを高めたいとき、熱意を持続させたいとき。", solution: "一つの学びの興奮を次の学習につなげ、連鎖的に学習意欲を高める。" },
+            12: { title: "量は質を生む", description: "複数の視点から物事を捉え、多角的な理解を得る。", context: "一つの視点だけでは理解が限定的なとき、包括的理解を求めるとき。", solution: "異なる角度や立場から同じ事象を観察し、多面的に理解する。" },
+            13: { title: "身体で覚える", description: "身体的な体験を通じてスキルを習得し、深く身に付ける。", context: "実践的なスキルを身につけたいとき、理論だけでは不十分なとき。", solution: "実際に手を動かし、身体的な体験を通じてスキルを習得する。" },
+            14: { title: "言葉のシャワー", description: "大量の情報に積極的に触れることで、知識の基盤を構築する。", context: "新しい分野の基礎知識を身につけたいとき。", solution: "関連する情報に積極的に浸り、知識のベースを広げる。" },
+            15: { title: "成長の発見", description: "学習の成果を具体的な形で蓄積し、成長を可視化する。", context: "学習の進歩が見えにくいとき、モチベーションを保ちたいとき。", solution: "学習成果を物理的な形で残し、積み重ねを実感できるようにする。" },
+            16: { title: "動きのなかで考える", description: "実際に行動しながら思考し、実践的な理解を深める。", context: "理論だけでは理解が進まないとき、実践的思考力を養いたいとき。", solution: "行動と思考を同時に行い、実践の中で理解を深める。" },
+            17: { title: "プロトタイピング", description: "試作品や原型を作ることで学習し、改善を重ねる。", context: "新しいアイデアを形にしたいとき、実践的に学びたいとき。", solution: "まず簡単な原型を作り、試行錯誤を通じて理解と技術を向上させる。" },
+            18: { title: "フィールドに飛び込む", description: "実際の現場に深く飛び込んで、生きた知識を獲得する。", context: "理論と実践のギャップを埋めたいとき、リアルな体験を求めるとき。", solution: "実際の現場や環境に身を置き、生の体験から学習する。" },
+            19: { title: "鳥の眼と虫の眼", description: "大局的視点と詳細な視点を使い分けて、バランスの取れた理解を得る。", context: "全体像が見えないとき、または詳細が見落とされがちなとき。", solution: "マクロとミクロの視点を意識的に切り替えて学習する。" },
+            20: { title: "隠れた関係性から学ぶ", description: "一見関係のない物事間の隠れた関連性を発見し、新たな洞察を得る。", context: "勉強、研究、読書、新しい視点が必要な時、クラス選択時。", solution: "学問分野を超えた共通の言葉や研究者を通じてつながりを見つける。" },
+            21: { title: "三角スケーリング", description: "段階的にレベルを上げながら学習し、着実にスキルアップする。", context: "複雑なスキルを身につけたいとき、段階的成長を求めるとき。", solution: "基礎から応用へと三角形のように段階的に学習範囲を拡大する。" },
+            22: { title: "探求への情熱", description: "未知の領域への探求心を持ち続け、学習への情熱を維持する。", context: "学習への情熱を維持したいとき、探求心を失いかけているとき。", solution: "探検家のような情熱と好奇心を持ち続け、学習に取り組む。" },
+            23: { title: "右脳と左脳のスイッチ", description: "創造性を発揮するためのスイッチを意識的に切り替える。", context: "アイデアが出ないとき、創造的思考が必要なとき。", solution: "環境や思考モードを意識的に変えて創造性を刺激する。" },
+            24: { title: "小さく生んで大きく育てる", description: "長期的な視点で学習を育て、時間をかけて成果を収穫する。", context: "即座の成果が見えにくい長期的学習に取り組むとき。", solution: "植物を育てるように、時間をかけて学習を育て、成果を待つ。" },
+            25: { title: "魅せる力", description: "学習内容を魅力的に表現し、他者との共有を促進する。", context: "学習内容を他者に伝えたいとき、表現力を高めたいとき。", solution: "聞き手を意識した魅力的な表現方法を工夫し、効果的に伝える。" },
+            26: { title: "「書き上げた」は道半ば", description: "完璧を求めずに最初の版を作り、改善を重ねる。", context: "完璧主義で前に進めないとき、アウトプットを出したいとき。", solution: "まず不完全でも形にし、その後改善を重ねて質を高める。" },
+            27: { title: "ゴール前のアクセル", description: "一段階の学習完了を次の学習への推進力に変える。", context: "学習の区切りがついたとき、次のステップに進みたいとき。", solution: "達成感を原動力として、より高いレベルの学習に挑戦する。" },
+            28: { title: "学びの共同体をつくる", description: "同じ目標を持つ仲間とコミュニティを形成し、共に学習する。", context: "一人での学習に限界を感じるとき、仲間と学びたいとき。", solution: "学習コミュニティを形成し、メンバー間で支援し合いながら学習する。" },
+            29: { title: "偶有的な出会い", description: "予期しない出会いや発見から学習機会を創り出す。", context: "新しい刺激や発見を求めるとき、学習の幅を広げたいとき。", solution: "偶然の出会いに心を開き、そこから学習のきっかけを見つける。" },
+            30: { title: "ライバルをつくる", description: "互いに高め合える競争相手との関係を学習に活用する。", context: "学習のモチベーションを高めたいとき、切磋琢磨したいとき。", solution: "良い競争相手を見つけ、互いに刺激し合いながら成長する。" },
+            31: { title: "はなすことでわかる", description: "声に出して考えることで思考を整理し、理解を深める。", context: "考えがまとまらないとき、思考を整理したいとき。", solution: "考えを声に出して整理し、対話を通じて理解を深める。" },
+            32: { title: "教えることによる学び", description: "他者に教えることで自分の理解を深め、知識を定着させる。", context: "知識を定着させたいとき、理解の深化を図りたいとき。", solution: "学んだことを他者に教える機会を作り、教える過程で学習する。" },
+            33: { title: "断固たる決意", description: "明確な意志を持って学習に取り組み、困難を乗り越える。", context: "困難な学習に挑戦するとき、意志を強く持ちたいとき。", solution: "学習への強い決意を持ち、目標達成まで諦めずに取り組む。" },
+            34: { title: "自分で考える", description: "常に疑問を持ち続け、批判的思考で学習を深める。", context: "受動的な学習になっているとき、批判的思考力を養いたいとき。", solution: "与えられた情報に疑問を持ち、自分なりに考え抜く姿勢を保つ。" },
+            35: { title: "目的へのアプローチ", description: "効果的で正確な学習方法を見つけ、質の高い学習を実現する。", context: "学習効率を上げたいとき、正確な知識を身につけたいとき。", solution: "検証済みの効果的な学習方法を採用し、質の高い学習を行う。" },
+            36: { title: "捨てる勇気", description: "既存の方法に固執せず、勇気を持って新しい学習法に挑戦する。", context: "学習方法を変える必要があるとき、新しい挑戦をしたいとき。", solution: "現状に満足せず、勇気を持って新しい学習方法に挑戦する。" },
+            37: { title: "フロンティア・アンテナ", description: "未開拓の領域や新しい可能性を積極的に探求する。", context: "新しい分野を開拓したいとき、イノベーションを求めるとき。", solution: "既存の枠を超えて新しい領域を探求し、フロンティアを開拓する。" },
+            38: { title: "セルフ・プロデュース", description: "自分自身の学習をプロデュースし、主体的に学習環境を創造する。", context: "主体的な学習を実現したいとき、学習環境を改善したいとき。", solution: "自分の学習を客観視し、プロデューサーの視点で最適化する。" },
+            39: { title: "突き抜ける", description: "時には極端なアプローチを取り、従来の枠を破って学習する。", context: "従来の方法では成果が出ないとき、ブレイクスルーが必要なとき。", solution: "常識にとらわれず、時には極端なアプローチで学習に取り組む。" }
         };
         
         // 効率的なレスポンシブキャンバスサイズ計算
@@ -3633,7 +3690,7 @@ pattern_number,title,description
         });
 
         // Canvas初期化
-        function initializeCanvas() {
+        function initCanvas() {
             try {
                 const canvasElement = document.getElementById('cardCanvas');
                 if (!canvasElement) {
@@ -3648,7 +3705,7 @@ pattern_number,title,description
                 if (width < 280 || height < 189) {
                     console.warn('初期化時のキャンバスサイズが小さすぎます。再試行します。', { width, height });
                     setTimeout(() => {
-                        initializeCanvas();
+                        initCanvas();
                     }, 200);
                     return;
                 }
@@ -4157,9 +4214,10 @@ pattern_number,title,description
             
             if (patternId && patternData[patternId]) {
                 const data = patternData[patternId];
-                document.getElementById('questionTheme').value = data.title;
-                document.getElementById('questionContent').value = data.description;
-                // context と solution フィールドは削除されたため参照しない
+                document.getElementById('patternTitle').value = data.title;
+                document.getElementById('patternDescription').value = data.description;
+                document.getElementById('patternContext').value = data.context;
+                document.getElementById('patternSolution').value = data.solution;
                 updateCard();
             }
         }
@@ -4172,10 +4230,10 @@ pattern_number,title,description
             }
             
             try {
-                const title = document.getElementById('questionTheme').value || '問いのテーマ';
-                const description = document.getElementById('questionContent').value || '';
-                const context = ''; // 削除された項目
-                const solution = ''; // 削除された項目
+                const title = document.getElementById('patternTitle').value || 'パターン名';
+                const description = document.getElementById('patternDescription').value || '';
+                const context = document.getElementById('patternContext').value || '';
+                const solution = document.getElementById('patternSolution').value || '';
                 const seriesName = document.getElementById('seriesName').value || '';
                 const creatorInfo = document.getElementById('creatorInfo').value || '';
                 // CSV処理時はoverride値を優先、通常時はUI値を使用
@@ -4318,16 +4376,16 @@ pattern_number,title,description
             const titleWidth = (patternNumber ? 728 : 798) * scaleFactor;
             const titleLeft = (patternNumber ? 115 : 45) * scaleFactor;
             
-            // 曲線的な透明度変化を作るグラデーションにしたい場合は数値を変更する
+            // 曲線的な透明度変化を作るグラデーション
             const titleGradient = new fabric.Gradient({
                 type: 'linear',
                 coords: { x1: 0, y1: 0, x2: titleWidth, y2: 0 },
                 colorStops: [
-                    { offset: 0, color: hexToRgba(colors.accent, 0.95) },
-                    { offset: 0.4, color: hexToRgba(colors.accent, 0.95) },
-                    { offset: 0.6, color: hexToRgba(colors.accent, 0.95) },
-                    { offset: 0.8, color: hexToRgba(colors.accent, 0.95) },
-                    { offset: 1, color: hexToRgba(colors.accent, 0.95) }
+                    { offset: 0, color: hexToRgba(colors.accent, 0.9) },
+                    { offset: 0.4, color: hexToRgba(colors.accent, 0.9) },
+                    { offset: 0.6, color: hexToRgba(colors.accent, 0.8) },
+                    { offset: 0.8, color: hexToRgba(colors.accent, 0.4) },
+                    { offset: 1, color: hexToRgba(colors.accent, 0.0) }
                 ]
             });
             
@@ -4364,16 +4422,16 @@ pattern_number,title,description
             // コンテンツエリア（白い背景）- スケール調整対応
             const contentWidth = 798 * scaleFactor;
             
-            // 曲線的な透明度変化を作るグラデーションにしたい場合は数値を変更する
+            // 曲線的な透明度変化を作るグラデーション
             const contentGradient = new fabric.Gradient({
                 type: 'linear',
                 coords: { x1: 0, y1: 0, x2: contentWidth, y2: 0 },
                 colorStops: [
-                    { offset: 0, color: hexToRgba(colors.accent, 0.95) },
-                    { offset: 0.4, color: hexToRgba(colors.accent, 0.95) },
-                    { offset: 0.6, color: hexToRgba(colors.accent, 0.95) },
-                    { offset: 0.8, color: hexToRgba(colors.accent, 0.95) },
-                    { offset: 1, color: hexToRgba(colors.accent, 0.95) }
+                    { offset: 0, color: hexToRgba(colors.accent, 0.9) },
+                    { offset: 0.4, color: hexToRgba(colors.accent, 0.9) },
+                    { offset: 0.6, color: hexToRgba(colors.accent, 0.8) },
+                    { offset: 0.8, color: hexToRgba(colors.accent, 0.4) },
+                    { offset: 1, color: hexToRgba(colors.accent, 0.1) }
                 ]
             });
             
@@ -4399,22 +4457,74 @@ pattern_number,title,description
             
             // 説明 - スケール調整対応
             if (description) {
-                const formattedDescription = insertLineBreaks(description, 32); // 文字数を36から32に調整
+                const formattedDescription = insertLineBreaks(description);
                 const descText = new fabric.Textbox(formattedDescription, {
                     left: 75 * scaleFactor,
                     top: yPosition,
                     width: 738 * scaleFactor,
-                    fontSize: 24 * scaleFactor, // フォントサイズを21から24に拡大
+                    fontSize: 21 * scaleFactor,
                     fill: '#333333',
                     fontFamily: getCurrentFontFamily(),
-                    lineHeight: 1.4, // 行間調整を追加
                     selectable: false
                 });
                 canvas.add(descText);
                 // テキストボックスの実際の高さを取得
                 canvas.renderAll();
                 const actualHeight = descText.calcTextHeight();
-                yPosition += Math.max(90 * scaleFactor, actualHeight + 35 * scaleFactor); // 下マージンも少し拡大
+                yPosition += Math.max(90 * scaleFactor, actualHeight + 30 * scaleFactor);
+            }
+            
+            // コンテクスト - スケール調整対応
+            if (context) {
+                const contextLabel = new fabric.Text('｜場面・状況', {
+                    left: 75 * scaleFactor,
+                    top: yPosition,
+                    fontSize: 18 * scaleFactor,
+                    fill: '#333333',
+                    fontFamily: getCurrentFontFamily(),
+                    fontWeight: 'bold',
+                    selectable: false
+                });
+                canvas.add(contextLabel);
+                
+                const contextText = new fabric.Textbox(insertLineBreaks(context), {
+                    left: 75 * scaleFactor,
+                    top: yPosition + 30 * scaleFactor,
+                    width: 738 * scaleFactor,
+                    fontSize: 18 * scaleFactor,
+                    fill: '#555555',
+                    fontFamily: getCurrentFontFamily(),
+                    selectable: false
+                });
+                canvas.add(contextText);
+                canvas.renderAll();
+                const contextHeight = contextText.calcTextHeight();
+                yPosition += Math.max(105 * scaleFactor, contextHeight + 60 * scaleFactor);
+            }
+            
+            // 解決策 - スケール調整対応
+            if (solution && yPosition < 480 * scaleFactor) {
+                const solutionLabel = new fabric.Text('｜工夫・トライアル', {
+                    left: 75 * scaleFactor,
+                    top: yPosition,
+                    fontSize: 18 * scaleFactor,
+                    fill: '#333333',
+                    fontFamily: getCurrentFontFamily(),
+                    fontWeight: 'bold',
+                    selectable: false
+                });
+                canvas.add(solutionLabel);
+                
+                const solutionText = new fabric.Textbox(insertLineBreaks(solution), {
+                    left: 75 * scaleFactor,
+                    top: yPosition + 30 * scaleFactor,
+                    width: 738 * scaleFactor,
+                    fontSize: 18 * scaleFactor,
+                    fill: '#555555',
+                    fontFamily: getCurrentFontFamily(),
+                    selectable: false
+                });
+                canvas.add(solutionText);
             }
             
             // 作成者情報とアイコンの要素を先に作成してサイズ測定（分離配置）
@@ -4599,13 +4709,35 @@ pattern_number,title,description
             // 作成者アイコンを正しいサイズで追加
             if (creatorIconImage) {
                 const iconClone = fabric.util.object.clone(creatorIconImage);
+                
+                // 比率を維持しながら25pxの枠内に収める計算（エクスポート用スケール適用）
+                const maxSize = 25;
+                const originalWidth = iconClone.width;
+                const originalHeight = iconClone.height;
+                const aspectRatio = originalWidth / originalHeight;
+                
+                let targetWidth, targetHeight;
+                if (aspectRatio > 1) {
+                    // 横長の場合：幅を基準にする
+                    targetWidth = maxSize;
+                    targetHeight = maxSize / aspectRatio;
+                } else {
+                    // 縦長または正方形の場合：高さを基準にする
+                    targetWidth = maxSize * aspectRatio;
+                    targetHeight = maxSize;
+                }
+                
+                const baseScale = Math.min(targetWidth / originalWidth, targetHeight / originalHeight);
+                const exportScaleX = (exportWidth * multiplier) / baseWidth;
+                const exportScaleY = (exportHeight * multiplier) / baseHeight;
+                
                 iconClone.set({
-                    left: (843 - 25 - 4 + (25 + 8)/2) * (exportWidth * multiplier) / baseWidth, // 背景四角の中央に配置
-                    top: (baseHeight - 54 + (25 + 8)/2) * (exportHeight * multiplier) / baseHeight, // 背景四角の中央に配置
+                    left: (843 - 25 - 4 + (25 + 8)/2) * exportScaleX, // 背景四角の中央に配置
+                    top: (baseHeight - 54 + (25 + 8)/2) * exportScaleY, // 背景四角の中央に配置
                     originX: 'center', // 中央基準で配置
                     originY: 'center', // 中央基準で配置
-                    scaleX: (25 / iconClone.width) * (exportWidth * multiplier) / baseWidth,
-                    scaleY: (25 / iconClone.height) * (exportHeight * multiplier) / baseHeight,
+                    scaleX: baseScale * exportScaleX,
+                    scaleY: baseScale * exportScaleY, // 比率維持のため同じベーススケールを使用
                     selectable: false
                 });
                 tempCanvas.add(iconClone);
@@ -4649,7 +4781,7 @@ pattern_number,title,description
             }
             
             try {
-                const title = document.getElementById('questionTheme').value || 'question-card';
+                const title = document.getElementById('patternTitle').value || 'pattern-card';
                 const safeTitle = title.replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
                 const link = document.createElement('a');
                 link.download = `${safeTitle}.png`;
@@ -4668,24 +4800,6 @@ pattern_number,title,description
         }
         
         // パターングリッド初期化
-        // プリセット選択のセレクトボックスを初期化
-        function initPatternSelect() {
-            const select = document.getElementById('patternSelect');
-            
-            // カスタムオプションを最初に追加
-            select.innerHTML = '<option value="">カスタム（独自作成）</option>';
-            
-            // patternDataから動的にオプションを生成
-            for (let i = 0; i <= 39; i++) {
-                if (patternData[i]) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.textContent = `${i}. ${patternData[i].title}`;
-                    select.appendChild(option);
-                }
-            }
-        }
-        
         function initPatternGrid() {
             const grid = document.getElementById('patternGrid');
             for (let i = 0; i <= 39; i++) {
@@ -4693,10 +4807,10 @@ pattern_number,title,description
                 item.className = 'pattern-item';
                 
                 // パターン番号とタイトルを表示
-                const questionTitle = patternData[i] ? patternData[i].title : 'パターン';
+                const patternTitle = patternData[i] ? patternData[i].title : 'パターン';
                 item.innerHTML = `
                     <div style="font-weight: bold; margin-bottom: 2px;">${i}</div>
-                    <div style="font-size: 9px; line-height: 1.2; text-align: center;">${questionTitle}</div>
+                    <div style="font-size: 9px; line-height: 1.2; text-align: center;">${patternTitle}</div>
                 `;
                 
                 item.onclick = () => togglePatternSelection(i, item);
@@ -4704,7 +4818,7 @@ pattern_number,title,description
             }
         }
         
-        // プリセット選択切り替え
+        // パターン選択切り替え
         function togglePatternSelection(patternId, element) {
             if (selectedPatterns.has(patternId)) {
                 selectedPatterns.delete(patternId);
@@ -4795,9 +4909,10 @@ pattern_number,title,description
                     // パターンデータを適用
                     if (patternData[patternId]) {
                         const data = patternData[patternId];
-                        document.getElementById('questionTheme').value = data.title;
-                        document.getElementById('questionContent').value = data.description;
-                        // context と solution フィールドは削除されたため参照しない
+                        document.getElementById('patternTitle').value = data.title;
+                        document.getElementById('patternDescription').value = data.description;
+                        document.getElementById('patternContext').value = data.context;
+                        document.getElementById('patternSolution').value = data.solution;
                         document.getElementById('patternSelect').value = patternId;
                     }
                     
@@ -4861,9 +4976,10 @@ pattern_number,title,description
                     // パターンデータを適用
                     if (patternData[patternId]) {
                         const data = patternData[patternId];
-                        document.getElementById('questionTheme').value = data.title;
-                        document.getElementById('questionContent').value = data.description;
-                        // context と solution フィールドは削除されたため参照しない
+                        document.getElementById('patternTitle').value = data.title;
+                        document.getElementById('patternDescription').value = data.description;
+                        document.getElementById('patternContext').value = data.context;
+                        document.getElementById('patternSolution').value = data.solution;
                         document.getElementById('patternSelect').value = patternId;
                     }
                     
@@ -4994,9 +5110,10 @@ pattern_number,title,description
         }
         function resetAll() {
             document.getElementById('patternSelect').value = '';
-            document.getElementById('questionTheme').value = '';
-            document.getElementById('questionContent').value = '';
-            // patternContext と patternSolution は削除されたフィールド
+            document.getElementById('patternTitle').value = '';
+            document.getElementById('patternDescription').value = '';
+            document.getElementById('patternContext').value = '';
+            document.getElementById('patternSolution').value = '';
             document.getElementById('seriesName').value = '';
             document.getElementById('creatorInfo').value = '';
             document.getElementById('creatorIcon').value = '';
@@ -5015,16 +5132,16 @@ pattern_number,title,description
         
         // CSVテンプレートダウンロード
         function downloadCSVTemplate() {
-            const csvContent = 'pattern_number,title,description\n' +
-                              '1,学習の目的,なぜこの学習をするのですか？この学びから何を得たいですか？\n' +
-                              '2,学習機会の創出,どのような場面で新しい学びの機会を見つけることができますか？\n' +
-                              ',独自の質問,具体的な問いかけを記入してください（カード番号は任意）';
+            const csvContent = 'pattern_number,title,description,context,solution\n' +
+                              '1,サンプルパターン1,学習に関する説明文,適用される場面・状況,工夫やトライアル内容\n' +
+                              '2,サンプルパターン2,学習に関する説明文2,適用される場面・状況2,工夫やトライアル内容2\n' +
+                              ',独自パターン,説明文（パターン番号は任意）,場面・状況,工夫・トライアル';
             
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             link.setAttribute('href', url);
-            link.setAttribute('download', 'question_card_template.csv');
+            link.setAttribute('download', 'pattern_card_template.csv');
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
@@ -5047,7 +5164,7 @@ pattern_number,title,description
                 
                 // CSV形式の基本検証（カンマ区切りかチェック）
                 if (!text.includes(',')) {
-                    alert('ファイルがCSV形式（カンマ区切り）ではありません。\n\nAIツールで作成した場合は、CSV形式で出力されているか確認してください。\n\n正しい形式例：\npattern_number,title,description');
+                    alert('ファイルがCSV形式（カンマ区切り）ではありません。\n\nAIツールで作成した場合は、CSV形式で出力されているか確認してください。\n\n正しい形式例：\ntitle,description,context,solution,pattern_number');
                     return;
                 }
                 
@@ -5055,7 +5172,7 @@ pattern_number,title,description
                 const validatedData = validateCSVData(data);
                 
                 if (validatedData.length === 0) {
-                    alert('有効なデータが見つかりませんでした。\n\nファイルがCSV形式で、必要な列（title, description）が含まれているか確認してください。');
+                    alert('有効なデータが見つかりませんでした。\n\nファイルがCSV形式で、必要な列（title, description, context, solution）が含まれているか確認してください。');
                     return;
                 }
                 
@@ -5131,7 +5248,7 @@ pattern_number,title,description
         
         // CSVデータバリデーション
         function validateCSVData(data) {
-            const requiredFields = ['title', 'description'];
+            const requiredFields = ['title', 'description', 'context', 'solution'];
             const validated = [];
             
             for (const row of data) {
@@ -5171,8 +5288,10 @@ pattern_number,title,description
             let html = '<table style="width: 100%; border-collapse: collapse; font-size: 12px;">';
             html += '<thead><tr style="background: #667eea; color: white;">';
             html += '<th style="padding: 8px; border: 1px solid #ddd;">番号</th>';
-            html += '<th style="padding: 8px; border: 1px solid #ddd;">質問テーマ</th>';
-            html += '<th style="padding: 8px; border: 1px solid #ddd;">問いかけ内容</th>';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">タイトル</th>';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">説明</th>';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">場面・状況</th>';
+            html += '<th style="padding: 8px; border: 1px solid #ddd;">工夫・トライアル</th>';
             html += '<th style="padding: 8px; border: 1px solid #ddd;">操作</th>';
             html += '</tr></thead><tbody>';
             
@@ -5180,7 +5299,9 @@ pattern_number,title,description
                 html += `<tr id="csvRow${index}" style="background: ${index % 2 === 0 ? '#ffffff' : '#f8f9ff'};">`;
                 html += `<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">${row.pattern_number || '-'}</td>`;
                 html += `<td style="padding: 6px; border: 1px solid #ddd;">${row.title}</td>`;
-                html += `<td style="padding: 6px; border: 1px solid #ddd;">${row.description.substring(0, 60)}${row.description.length > 60 ? '...' : ''}</td>`;
+                html += `<td style="padding: 6px; border: 1px solid #ddd;">${row.description.substring(0, 30)}${row.description.length > 30 ? '...' : ''}</td>`;
+                html += `<td style="padding: 6px; border: 1px solid #ddd;">${row.context.substring(0, 25)}${row.context.length > 25 ? '...' : ''}</td>`;
+                html += `<td style="padding: 6px; border: 1px solid #ddd;">${row.solution.substring(0, 25)}${row.solution.length > 25 ? '...' : ''}</td>`;
                 html += `<td style="padding: 6px; border: 1px solid #ddd; text-align: center;">`;
                 html += `<button onclick="editCSVRow(${index})" class="csv-edit-button">✏️</button>`;
                 html += `</td>`;
@@ -5275,9 +5396,10 @@ pattern_number,title,description
             try {
                 for (const [index, row] of csvData.entries()) {
                     // データを入力フィールドに設定
-                    document.getElementById('questionTheme').value = row.title;
-                    document.getElementById('questionContent').value = row.description;
-                    // context と solution フィールドは削除されたため参照しない
+                    document.getElementById('patternTitle').value = row.title;
+                    document.getElementById('patternDescription').value = row.description;
+                    document.getElementById('patternContext').value = row.context;
+                    document.getElementById('patternSolution').value = row.solution;
                     
                     // カード生成（pattern_numberを直接渡す）
                     updateCard(row.pattern_number);
@@ -5348,9 +5470,10 @@ pattern_number,title,description
             try {
                 for (const [index, row] of csvData.entries()) {
                     // データを入力フィールドに設定
-                    document.getElementById('questionTheme').value = row.title;
-                    document.getElementById('questionContent').value = row.description;
-                    // context と solution フィールドは削除されたため参照しない
+                    document.getElementById('patternTitle').value = row.title;
+                    document.getElementById('patternDescription').value = row.description;
+                    document.getElementById('patternContext').value = row.context;
+                    document.getElementById('patternSolution').value = row.solution;
                     
                     // カード生成（pattern_numberを直接渡す）
                     updateCard(row.pattern_number);
@@ -5455,12 +5578,16 @@ pattern_number,title,description
             document.getElementById('csvEditNumber').value = row.pattern_number || '';
             document.getElementById('csvEditTitle').value = row.title || '';
             document.getElementById('csvEditDescription').value = row.description || '';
+            document.getElementById('csvEditContext').value = row.context || '';
+            document.getElementById('csvEditSolution').value = row.solution || '';
             
             // 元のメインフォームの値を保存
             originalCSVData = {
                 patternSelect: document.getElementById('patternSelect').value,
-                questionTheme: document.getElementById('questionTheme').value,
-                questionContent: document.getElementById('questionContent').value
+                patternTitle: document.getElementById('patternTitle').value,
+                patternDescription: document.getElementById('patternDescription').value,
+                patternContext: document.getElementById('patternContext').value,
+                patternSolution: document.getElementById('patternSolution').value
             };
             
             // 編集中のデータでカードを更新
@@ -5477,8 +5604,10 @@ pattern_number,title,description
             if (editingCSVIndex === -1) return;
             
             // 編集中の値をメインフォームに反映
-            document.getElementById('questionTheme').value = document.getElementById('csvEditTitle').value;
-            document.getElementById('questionContent').value = document.getElementById('csvEditDescription').value;
+            document.getElementById('patternTitle').value = document.getElementById('csvEditTitle').value;
+            document.getElementById('patternDescription').value = document.getElementById('csvEditDescription').value;
+            document.getElementById('patternContext').value = document.getElementById('csvEditContext').value;
+            document.getElementById('patternSolution').value = document.getElementById('csvEditSolution').value;
             
             // カードを更新（pattern_numberを直接渡す）
             const patternNumber = document.getElementById('csvEditNumber').value || '';
@@ -5492,7 +5621,9 @@ pattern_number,title,description
             csvData[editingCSVIndex] = {
                 pattern_number: document.getElementById('csvEditNumber').value || null,
                 title: document.getElementById('csvEditTitle').value,
-                description: document.getElementById('csvEditDescription').value
+                description: document.getElementById('csvEditDescription').value,
+                context: document.getElementById('csvEditContext').value,
+                solution: document.getElementById('csvEditSolution').value
             };
             
             // プレビューテーブルを更新
@@ -5517,8 +5648,10 @@ pattern_number,title,description
             // 元のフォーム値を復元
             if (originalCSVData) {
                 document.getElementById('patternSelect').value = originalCSVData.patternSelect;
-                document.getElementById('questionTheme').value = originalCSVData.questionTheme;
-                document.getElementById('questionContent').value = originalCSVData.questionContent;
+                document.getElementById('patternTitle').value = originalCSVData.patternTitle;
+                document.getElementById('patternDescription').value = originalCSVData.patternDescription;
+                document.getElementById('patternContext').value = originalCSVData.patternContext;
+                document.getElementById('patternSolution').value = originalCSVData.patternSolution;
                 
                 // カードを元に戻す
                 updateCard();
@@ -5538,8 +5671,7 @@ pattern_number,title,description
             // レンダリング完了を待ってから初期化
             requestAnimationFrame(() => {
                 setTimeout(() => {
-                    initializeCanvas();
-                    initPatternSelect(); // プリセット選択の初期化を追加
+                    initCanvas();
                     initPatternGrid();
                     updateBatchButton();
                     
@@ -6079,9 +6211,10 @@ pattern_number,title,description
                     
                     try {
                         // CSVデータをフォームに適用
-                        document.getElementById('questionTheme').value = row.title || '';
-                        document.getElementById('questionContent').value = row.description || '';
-                        // context と solution フィールドは削除されたため参照しない
+                        document.getElementById('patternTitle').value = row.title || '';
+                        document.getElementById('patternDescription').value = row.description || '';
+                        document.getElementById('patternContext').value = row.context || '';
+                        document.getElementById('patternSolution').value = row.solution || '';
                         
                         // パターン番号があれば設定
                         if (row.pattern_number) {
@@ -6201,8 +6334,10 @@ pattern_number,title,description
                         // パターンデータを適用
                         if (patternData[patternId]) {
                             const data = patternData[patternId];
-                            document.getElementById('questionTheme').value = data.title;
-                            document.getElementById('questionContent').value = data.description;
+                            document.getElementById('patternTitle').value = data.title;
+                            document.getElementById('patternDescription').value = data.description;
+                            document.getElementById('patternContext').value = data.context;
+                            document.getElementById('patternSolution').value = data.solution;
                             document.getElementById('patternSelect').value = patternId;
                         }
                         
@@ -6302,7 +6437,7 @@ pattern_number,title,description
                 }
                 
                 // 基本HTML構造を作成
-                newWindow.document.write('<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>問いかけカード スライドショー</title></head><body></body></html>');
+                newWindow.document.write('<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>パターンカード スライドショー</title></head><body></body></html>');
                 newWindow.document.close();
                 
                 // CSSスタイルを追加
@@ -6320,13 +6455,11 @@ pattern_number,title,description
                 .controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 100; }
                 .btn { padding: 12px 24px; border: none; border-radius: 25px; background: rgba(255,255,255,0.95); color: #333; font-size: 16px; cursor: pointer; border: 1px solid #ddd; position: relative; white-space: nowrap; }
                 .btn:hover { background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-                .btn-slideshow { background: linear-gradient(45deg, #667eea, #764ba2) !important; color: white !important; }
-                .btn-slideshow:hover { background: linear-gradient(45deg, #5a6fd8, #6a41a0) !important; color: white !important; }
                 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
                 .auto-play { background: #4CAF50; color: white; border: 1px solid #4CAF50; }
-                .auto-play:hover { background: #45a049 !important; color: white !important; border: 1px solid #45a049 !important; }
+                .auto-play:hover { background: white; color: #4CAF50; border: 1px solid #4CAF50; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
                 .auto-play.playing { background: #FF5722; border: 1px solid #FF5722; }
-                .auto-play.playing:hover { background: #e64a19 !important; color: white !important; border: 1px solid #e64a19 !important; }
+                .auto-play.playing:hover { background: white; color: #FF5722; border: 1px solid #FF5722; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
                 .btn-text { display: inline; }
                 .btn-icon { display: none; }
                 .tooltip { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 6px 10px; border-radius: 4px; font-size: 12px; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.3s; margin-bottom: 5px; }
@@ -6347,7 +6480,7 @@ pattern_number,title,description
                 // HTMLコンテンツを追加
                 newWindow.document.body.innerHTML = `
                     <div class="slideshow-container">
-                        <div class="header"><h1>📚 問いかけ スライドショー ✨ 高解像度（${888*2}×${600*2}px）</h1></div>
+                        <div class="header"><h1>📚 パターンカード スライドショー ✨ 高解像度（${888*2}×${600*2}px）</h1></div>
                         <div class="card-display">
                             <img id="cardImage" class="card-image" src="${cardsData[0].imageUrl}" alt="Pattern Card">
                             <div class="card-info">
